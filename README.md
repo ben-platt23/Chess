@@ -1,11 +1,11 @@
 # Chess
 ## Fully functioning chess game made in python! GUI made using Tkinter
 
-## Extensions required to run
+## Extensions required to run:
 
-## GUI
+## GUI:
 ## --pip install tk
-## Sounds
+## Sounds:
 ## --pip install playsound
-## Images
+## Images:
 ## --pip install PIL

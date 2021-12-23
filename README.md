@@ -7,6 +7,8 @@
 ### Features not included (for simplicities sake):
 #### -En passant move for pawns
 #### -Stalemate match result 
+#### -Checkmate (Although you should quickly figure out if you are in checkmate. The game won't let you proceed)
+#### -Restart game (Since no end of game conditions are included)
 
 
 &emsp;

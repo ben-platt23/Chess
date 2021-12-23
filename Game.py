@@ -5,6 +5,7 @@ from tkinter import messagebox
 from PIL import Image, ImageTk
 from playsound import playsound
 
+# ---------------------------- Begin: Variables and Initializations ----------------------------
 # initialize root and window geometry
 root = Tk()
 root.title("Chess - Ben Platt")
@@ -22,9 +23,10 @@ wh_kingside_rook_moved = False
 bl_king_moved = False
 bl_queenside_rook_moved = False
 bl_kingside_rook_moved = False
-black_king_ind = 4
 
+# ---------------------------- End: Variables and Initializations ----------------------------
 
+# ---------------------------- Begin: Stuff to put white into check ----------------------------
 # get row of white king (for check)
 def get_wh_ki_row(white_king_ind):
     if white_king_ind in r1:
@@ -71,7 +73,6 @@ def white_in_check():
                     global index_stored
                     index_stored = i
                     if black_pawn_move(white_king_ind, button_pass, r2):
-                        print("pawn")
                         return True
                 # knight - need index and row
                 if buttons[i]["image"] in black_kn:
@@ -81,7 +82,6 @@ def white_in_check():
                     global row_stored
                     row_stored = get_piece_row()
                     if knight_move(white_king_ind, white_king_row):
-                        print("knight")
                         return True
                 if buttons[i]["image"] in black_b:
                     # get index
@@ -89,7 +89,6 @@ def white_in_check():
                     # get row of piece (row_stored)
                     row_stored = get_piece_row()
                     if bishop_move(white_king_ind, white_king_row):
-                        print("bishop")
                         return True
                 if buttons[i]["image"] in black_r:
                     # get index
@@ -97,7 +96,6 @@ def white_in_check():
                     # get row of piece (row_stored)
                     row_stored = get_piece_row()
                     if rook_move(white_king_ind, white_king_row):
-                        print("rook")
                         return True
                 if buttons[i]["image"] in black_q:
                     # get index
@@ -105,17 +103,15 @@ def white_in_check():
                     # get row of piece (row_stored)
                     row_stored = get_piece_row()
                     if queen_move(white_king_ind, white_king_row):
-                        print("queen")
                         return True
                 if buttons[i]["image"] in black_ki:
                     # get index
                     index_stored = i
                     if king_move(white_king_ind, white_king_row):
-                        print("king")
                         return True
 
 
-# get row of specified piece
+# get row of specified piece. this can be applied to both white and black checks
 def get_piece_row():
     global row_stored
     if index_stored in r1:
@@ -136,7 +132,9 @@ def get_piece_row():
         row_stored = 8
     return row_stored
 
+# ---------------------------- End: Stuff to put white into check ----------------------------
 
+# ---------------------------- Begin: Stuff to put black into check ----------------------------
 # get row of black king
 def get_bl_ki_row(black_king_ind):
     if black_king_ind in r1:
@@ -187,15 +185,6 @@ def black_in_check():
                     global row_stored
                     row_stored = get_piece_row()
                     if white_pawn_move(black_king_ind, button_pass, r7):
-                        global attacking_piece
-                        global attacking_index
-                        global attacking_row
-                        global pawn
-                        pawn = "pawn"
-                        attacking_piece = pawn
-                        attacking_index = index_stored
-                        attacking_row = row_stored
-                        print("pawn")
                         return True
                 # knight - need index and row
                 if buttons[i]["image"] in white_kn:
@@ -204,12 +193,6 @@ def black_in_check():
                     # get row of piece (row_stored)
                     row_stored = get_piece_row()
                     if knight_move(black_king_ind, black_king_row):
-                        global knight
-                        knight = "knight"
-                        attacking_piece = knight
-                        attacking_index = index_stored
-                        attacking_row = row_stored
-                        print("knight")
                         return True
                 if buttons[i]["image"] in white_b:
                     # get index
@@ -217,12 +200,6 @@ def black_in_check():
                     # get row of piece (row_stored)
                     row_stored = get_piece_row()
                     if bishop_move(black_king_ind, black_king_row):
-                        global bishop
-                        bishop = "bishop"
-                        attacking_piece = bishop
-                        attacking_index = index_stored
-                        attacking_row = row_stored
-                        print("bishop")
                         return True
                 if buttons[i]["image"] in white_r:
                     # get index
@@ -230,12 +207,6 @@ def black_in_check():
                     # get row of piece (row_stored)
                     row_stored = get_piece_row()
                     if rook_move(black_king_ind, black_king_row):
-                        global rook
-                        rook = "rook"
-                        attacking_piece = rook
-                        attacking_index = index_stored
-                        attacking_row = row_stored
-                        print("rook")
                         return True
                 if buttons[i]["image"] in white_q:
                     # get index
@@ -243,12 +214,6 @@ def black_in_check():
                     # get row of piece (row_stored)
                     row_stored = get_piece_row()
                     if queen_move(black_king_ind, black_king_row):
-                        global queen
-                        queen = "queen"
-                        attacking_piece = queen
-                        attacking_index = index_stored
-                        attacking_row = row_stored
-                        print("queen")
                         return True
                 if buttons[i]["image"] in white_ki:
                     # get index
@@ -256,15 +221,11 @@ def black_in_check():
                     # get row of piece (row_stored)
                     row_stored = get_piece_row()
                     if king_move(black_king_ind, black_king_row):
-                        global king
-                        king = "king"
-                        attacking_piece = king
-                        attacking_index = index_stored
-                        attacking_row = row_stored
-                        print("king")
                         return True
+# ---------------------------- End: Stuff to put black into check ----------------------------
 
 
+# ---------------------------- Begin: Castling ----------------------------
 # checks if castling is possible for black, the king legal moves calls this function
 def black_is_castling(diff):
     if not bl_king_moved:
@@ -310,8 +271,9 @@ def white_is_castling(diff):
                 return False
     elif wh_king_moved:
         return False
+# ---------------------------- End: Castling ----------------------------
 
-
+# ---------------------------- Begin: Pawn Promotion ----------------------------
 # does pawn promotion action for black
 def do_black_pawn_promotion(button):
     piece_chosen = button["image"]
@@ -370,8 +332,10 @@ def check_pawn_promotion(index_new):
             return True
         else:
             return False
+# ---------------------------- End: Pawn Promotion ----------------------------
 
 
+# ---------------------------- Begin: Piece movement (white and black) ----------------------------
 # Defines legal moves for king. Works for both black and white
 def king_move(index_new, row):
     edges = [0, 7, 8, 15, 16, 23, 24, 31, 32, 39, 40, 47, 48, 55, 56, 63]
@@ -653,8 +617,10 @@ def white_pawn_move(index_new, button, row2):
             return True
     else:
         return False
+# ---------------------------- End: Piece movement (white and black) ----------------------------
 
 
+# ---------------------------- Begin: General Button Command (controls flow of game) ----------------------------
 # this happens when a button is clicked, accounts for the movement of pieces. Calls other functions that determine legal moves
 def button_clicked(button, index, row):
     # Used these global variables to make coding life easier, these are consistently used by other functions including this one
@@ -926,8 +892,10 @@ def button_clicked(button, index, row):
                     messagebox.showinfo(title="Check!", message="White's king is now in check!")
                 # Now it's white's turn
                 white_turn = True
+# ---------------------------- End: General Button Command ----------------------------
 
 
+# ---------------------------- Begin: Board and Image Construction (Using array of buttons, labels and images downloaded on the internet) ----------------------------
 # Constructs the board using a list of 64 buttons and some labels (helpful to the user).
 def board():
     # white pieces variables,
@@ -1301,11 +1269,14 @@ def board():
     # king
     black_pieces.append(buttons[4]["image"])
     black_ki.append(buttons[4]["image"])
+# ---------------------------- End: Board and Image Construction ----------------------------
 
-
+# ---------------------------- Begin: Run the Program ----------------------------
 # create board
 board()
 # start game sound
-# playsound("start.mp3")
+playsound("start.mp3")
 # run tkinter program
 root.mainloop()
+# ---------------------------- Begin: End the Program ----------------------------
+

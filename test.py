@@ -22,6 +22,379 @@ wh_kingside_rook_moved = False
 bl_king_moved = False
 bl_queenside_rook_moved = False
 bl_kingside_rook_moved = False
+black_king_ind = 4
+
+
+# function that checks if the move will put black into check, and if so, reverts the move and returns true
+def move_puts_black_to_check():
+    # reverts if move places black into check
+    global button_pass
+    revert1 = button_pass["image"]
+    revert2 = buttons[black_king_ind]["image"]
+    # Second button that is pressed becomes the new piece
+    buttons[black_king_ind].config(image=revert1)
+    # Deletes the old piece
+    button_pass.config(image="")
+    # Does this move put black in check? if so, revert
+    if black_in_check():
+        buttons[black_king_ind].config(image=revert2)
+        button_pass.config(image=revert1)
+        return True
+    else:
+        return False
+
+
+# function that is called within checkmate
+def check_moves_against_piece():
+    button_indices = [*range(0, 64, 1)]
+    for i in button_indices:
+        if buttons[i]["image"] is not "":
+            if buttons[i]["image"] in black_pieces:
+                # pawn - need index and button
+                if buttons[i]["image"] in black_p:
+                    # get button of piece
+                    global button_pass
+                    button_pass = buttons[i]
+                    # get index
+                    global index_stored
+                    global black_king_ind
+                    index_stored = black_king_ind
+                    if black_pawn_move(attacking_index, button_pass, r2):
+                        revert1 = buttons[black_king_ind]["image"]
+                        index = index_stored
+                        revert2 = buttons[i]["image"]
+                        # Second button that is pressed becomes the new piece
+                        buttons[i].config(image=buttons[black_king_ind]["image"])
+                        # Deletes the old piece
+                        buttons[black_king_ind].config(image="")
+                        # Does this move place your king into check? if so, reverts and gives you another turn
+                        if not black_in_check():
+                            buttons[i].config(image=revert2)
+                            buttons[index].config(image=revert1)
+                            print("move to ", i, "is possible")
+                            return False
+                        else:
+                            buttons[i].config(image=revert2)
+                            buttons[index].config(image=revert1)
+                            return True
+                if buttons[i]["image"] in black_kn:
+                    # get index
+                    index_stored = black_king_ind
+                    if knight_move(attacking_index, attacking_row):
+                        revert1 = buttons[black_king_ind]["image"]
+                        index = index_stored
+                        revert2 = buttons[i]["image"]
+                        # Second button that is pressed becomes the new piece
+                        buttons[i].config(image=buttons[black_king_ind]["image"])
+                        # Deletes the old piece
+                        buttons[black_king_ind].config(image="")
+                        # Does this move place your king into check? if so, reverts and gives you another turn
+                        if not black_in_check():
+                            buttons[i].config(image=revert2)
+                            buttons[index].config(image=revert1)
+                            print("move to ", i, "is possible")
+                            return False
+                        else:
+                            buttons[i].config(image=revert2)
+                            buttons[index].config(image=revert1)
+                            return True
+                if buttons[i]["image"] in black_b:
+                    # get index
+                    index_stored = black_king_ind
+                    if bishop_move(attacking_index, attacking_row):
+                        revert1 = buttons[black_king_ind]["image"]
+                        index = index_stored
+                        revert2 = buttons[i]["image"]
+                        # Second button that is pressed becomes the new piece
+                        buttons[i].config(image=buttons[black_king_ind]["image"])
+                        # Deletes the old piece
+                        buttons[black_king_ind].config(image="")
+                        # Does this move place your king into check? if so, reverts and gives you another turn
+                        if not black_in_check():
+                            buttons[i].config(image=revert2)
+                            buttons[index].config(image=revert1)
+                            print("move to ", i, "is possible")
+                            return False
+                        else:
+                            buttons[i].config(image=revert2)
+                            buttons[index].config(image=revert1)
+                            return True
+                if buttons[i]["image"] in black_r:
+                    # get index
+                    index_stored = black_king_ind
+                    if rook_move(attacking_index, attacking_row):
+                        revert1 = buttons[black_king_ind]["image"]
+                        index = index_stored
+                        revert2 = buttons[i]["image"]
+                        # Second button that is pressed becomes the new piece
+                        buttons[i].config(image=buttons[black_king_ind]["image"])
+                        # Deletes the old piece
+                        buttons[black_king_ind].config(image="")
+                        # Does this move place your king into check? if so, reverts and gives you another turn
+                        if not black_in_check():
+                            buttons[i].config(image=revert2)
+                            buttons[index].config(image=revert1)
+                            print("move to ", i, "is possible")
+                            return False
+                        else:
+                            buttons[i].config(image=revert2)
+                            buttons[index].config(image=revert1)
+                            return True
+                if buttons[i]["image"] in black_q:
+                    # get index
+                    index_stored = black_king_ind
+                    if queen_move(attacking_index, attacking_row):
+                        revert1 = buttons[black_king_ind]["image"]
+                        index = index_stored
+                        revert2 = buttons[i]["image"]
+                        # Second button that is pressed becomes the new piece
+                        buttons[i].config(image=buttons[black_king_ind]["image"])
+                        # Deletes the old piece
+                        buttons[black_king_ind].config(image="")
+                        # Does this move place your king into check? if so, reverts and gives you another turn
+                        if not black_in_check():
+                            buttons[i].config(image=revert2)
+                            buttons[index].config(image=revert1)
+                            print("move to ", i, "is possible")
+                            return False
+                        else:
+                            buttons[i].config(image=revert2)
+                            buttons[index].config(image=revert1)
+                            return True
+                if buttons[i]["image"] in black_ki:
+                    # get index
+                    index_stored = black_king_ind
+                    if king_move(attacking_index, attacking_row):
+                        revert1 = buttons[black_king_ind]["image"]
+                        index = index_stored
+                        revert2 = buttons[i]["image"]
+                        # Second button that is pressed becomes the new piece
+                        buttons[i].config(image=buttons[black_king_ind]["image"])
+                        # Deletes the old piece
+                        buttons[black_king_ind].config(image="")
+                        # Does this move place your king into check? if so, reverts and gives you another turn
+                        if not black_in_check():
+                            buttons[i].config(image=revert2)
+                            buttons[index].config(image=revert1)
+                            print("move to ", i, "is possible")
+                            return False
+                        else:
+                            buttons[i].config(image=revert2)
+                            buttons[index].config(image=revert1)
+                            return True
+    return True
+
+
+# check if black is in mate
+def black_in_mate():
+    # method, check if any black piece can attack the piece that is attacking the black king. if not, then MAYBE checkmate.
+    # Also need to check if king can move out of the way, or if a piece can block the attacking piece.
+    # span of the board
+    button_indices = [*range(0, 64, 1)]
+    movement_range = [black_king_ind-9, black_king_ind-8, black_king_ind-7, black_king_ind+1, black_king_ind+9, black_king_ind+8, black_king_ind+7,]
+    for i in movement_range:
+        print(i)
+    # now check if any of these moves doesn't put black into check. if so, return false.
+    for i in button_indices:
+        print(i)
+        global row_stored
+        row_stored = get_bl_ki_row(black_king_ind)
+        global index_stored
+        index_stored = black_king_ind
+        if i in movement_range:
+            if i in r1:
+                print("row 1 is possible")
+                if king_move(i, 1):
+                    print("king possible move to ", i, " in row 1")
+                    revert1 = buttons[black_king_ind]["image"]
+                    index = index_stored
+                    revert2 = buttons[i]["image"]
+                    # Second button that is pressed becomes the new piece
+                    buttons[i].config(image=buttons[black_king_ind]["image"])
+                    # Deletes the old piece
+                    buttons[black_king_ind].config(image="")
+                    # Does this move place your king into check? if so, reverts and gives you another turn
+                    if not black_in_check():
+                        buttons[i].config(image=revert2)
+                        buttons[index].config(image=revert1)
+                        print("move to ", i, "is possible")
+                        return False
+                    else:
+                        buttons[i].config(image=revert2)
+                        buttons[index].config(image=revert1)
+            elif i in r2:
+                print("row 2 is possible")
+                if king_move(i, 2):
+                    print("king possible move to ", i, " in row 2")
+                    revert1 = buttons[black_king_ind]["image"]
+                    index = index_stored
+                    revert2 = buttons[i]["image"]
+                    # Second button that is pressed becomes the new piece
+                    buttons[i].config(image=buttons[black_king_ind]["image"])
+                    # Deletes the old piece
+                    buttons[black_king_ind].config(image="")
+                    # Does this move place your king into check? if so, reverts and gives you another turn
+                    if not black_in_check():
+                        buttons[i].config(image=revert2)
+                        buttons[index].config(image=revert1)
+                        print("move to ", i, "is possible")
+                        return False
+                    else:
+                        buttons[i].config(image=revert2)
+                        buttons[index].config(image=revert1)
+
+            elif i in r3:
+                print("row 3 is possible")
+                if king_move(i, 3):
+                    print("king possible move to ", i, " in row 3")
+                    # reverts if move places black into check
+                    revert1 = buttons[black_king_ind]["image"]
+                    index = index_stored
+                    revert2 = buttons[i]["image"]
+                    # Second button that is pressed becomes the new piece
+                    buttons[i].config(image=buttons[black_king_ind]["image"])
+                    # Deletes the old piece
+                    buttons[black_king_ind].config(image="")
+                    # Does this move place your king into check? if so, reverts and gives you another turn
+                    if not black_in_check():
+                        buttons[i].config(image=revert2)
+                        buttons[index].config(image=revert1)
+                        print("move to ", i, "is possible")
+                        return False
+                    else:
+                        buttons[i].config(image=revert2)
+                        buttons[index].config(image=revert1)
+
+            elif i in r4:
+                print("row 4 is possible")
+                if king_move(i, 4):
+                    print("king possible move to ", i, " in row 4")
+                    revert1 = buttons[black_king_ind]["image"]
+                    index = index_stored
+                    revert2 = buttons[i]["image"]
+                    # Second button that is pressed becomes the new piece
+                    buttons[i].config(image=buttons[black_king_ind]["image"])
+                    # Deletes the old piece
+                    buttons[black_king_ind].config(image="")
+                    # Does this move place your king into check? if so, reverts and gives you another turn
+                    if not black_in_check():
+                        buttons[i].config(image=revert2)
+                        buttons[index].config(image=revert1)
+                        print("move to ", i, "is possible")
+                        return False
+                    else:
+                        buttons[i].config(image=revert2)
+                        buttons[index].config(image=revert1)
+
+            elif i in r5:
+                print("row 5 is possible")
+                if king_move(i, 5):
+                    print("king possible move to ", i, " in row 5")
+                    revert1 = buttons[black_king_ind]["image"]
+                    index = index_stored
+                    revert2 = buttons[i]["image"]
+                    # Second button that is pressed becomes the new piece
+                    buttons[i].config(image=buttons[black_king_ind]["image"])
+                    # Deletes the old piece
+                    buttons[black_king_ind].config(image="")
+                    # Does this move place your king into check? if so, reverts and gives you another turn
+                    if not black_in_check():
+                        buttons[i].config(image=revert2)
+                        buttons[index].config(image=revert1)
+                        print("move to ", i, "is possible")
+                        return False
+                    else:
+                        buttons[i].config(image=revert2)
+                        buttons[index].config(image=revert1)
+
+            elif i in r6:
+                print("row 6 is possible")
+                if king_move(i, 6):
+                    print("king possible move to ", i, " in row 6")
+                    revert1 = buttons[black_king_ind]["image"]
+                    index = index_stored
+                    revert2 = buttons[i]["image"]
+                    # Second button that is pressed becomes the new piece
+                    buttons[i].config(image=buttons[black_king_ind]["image"])
+                    # Deletes the old piece
+                    buttons[black_king_ind].config(image="")
+                    # Does this move place your king into check? if so, reverts and gives you another turn
+                    if not black_in_check():
+                        buttons[i].config(image=revert2)
+                        buttons[index].config(image=revert1)
+                        print("move to ", i, "is possible")
+                        return False
+                    else:
+                        buttons[i].config(image=revert2)
+                        buttons[index].config(image=revert1)
+
+            elif i in r7:
+                print("row 7 is possible")
+                if king_move(i, 7):
+                    print("king possible move to ", i, " in row 7")
+                    revert1 = buttons[black_king_ind]["image"]
+                    index = index_stored
+                    revert2 = buttons[i]["image"]
+                    # Second button that is pressed becomes the new piece
+                    buttons[i].config(image=buttons[black_king_ind]["image"])
+                    # Deletes the old piece
+                    buttons[black_king_ind].config(image="")
+                    # Does this move place your king into check? if so, reverts and gives you another turn
+                    if not black_in_check():
+                        buttons[i].config(image=revert2)
+                        buttons[index].config(image=revert1)
+                        print("move to ", i, "is possible")
+                        return False
+                    else:
+                        buttons[i].config(image=revert2)
+                        buttons[index].config(image=revert1)
+
+            elif i in r8:
+                print("row 8 is possible")
+                if king_move(i, 8):
+                    print("king possible move to ", i, " in row 8")
+                    revert1 = buttons[black_king_ind]["image"]
+                    index = index_stored
+                    revert2 = buttons[i]["image"]
+                    # Second button that is pressed becomes the new piece
+                    buttons[i].config(image=buttons[black_king_ind]["image"])
+                    # Deletes the old piece
+                    buttons[black_king_ind].config(image="")
+                    # Does this move place your king into check? if so, reverts and gives you another turn
+                    if not black_in_check():
+                        buttons[i].config(image=revert2)
+                        buttons[index].config(image=revert1)
+                        print("move to ", i, "is possible")
+                        return False
+                    else:
+                        buttons[i].config(image=revert2)
+                        buttons[index].config(image=revert1)
+
+    # check if any black piece can attack the piece attacking the king
+    if attacking_piece == "pawn":
+        if check_moves_against_piece() and move_puts_black_to_check():
+            print("nothing can attack the pawn")
+            return True
+    if attacking_piece == "knight":
+        if check_moves_against_piece() and move_puts_black_to_check():
+            print("nothing can attack the knight")
+            return True
+    if attacking_piece == "bishop":
+        if check_moves_against_piece() and move_puts_black_to_check():
+            print("nothing can attack the bishop")
+            return True
+    if attacking_piece == "rook":
+        if check_moves_against_piece() and move_puts_black_to_check():
+            print("nothing can attack the rook")
+            return True
+    if attacking_piece == "queen":
+        if check_moves_against_piece() and move_puts_black_to_check():
+            print("nothing can attack the queen")
+            return True
+    if attacking_piece == "king":
+        if check_moves_against_piece() and move_puts_black_to_check():
+            print("nothing can attack the king")
+            return True
 
 
 # get row of white king
@@ -53,6 +426,7 @@ def white_in_check():
         if buttons[i]["image"] is not "":
             if buttons[i]["image"] in white_pieces:
                 if buttons[i]["image"] in white_ki:
+                    global white_king_ind
                     white_king_ind = i
                     break
     # get row of black king (row_new)
@@ -108,7 +482,7 @@ def white_in_check():
                 if buttons[i]["image"] in black_ki:
                     # get index
                     index_stored = i
-                    if king_move(white_king_ind):
+                    if king_move(white_king_ind, white_king_row):
                         print("king")
                         return True
 
@@ -164,6 +538,7 @@ def black_in_check():
         if buttons[i]["image"] is not "":
             if buttons[i]["image"] in black_pieces:
                 if buttons[i]["image"] in black_ki:
+                    global black_king_ind
                     black_king_ind = i
                     break
     # get row of black king (row_new)
@@ -175,11 +550,23 @@ def black_in_check():
                 # pawn - need index and button
                 if buttons[i]["image"] in white_p:
                     # get button of piece
+                    global button_pass
                     button_pass = buttons[i]
                     # get index
                     global index_stored
                     index_stored = i
+                    # get row of piece (row_stored)
+                    global row_stored
+                    row_stored = get_piece_row()
                     if white_pawn_move(black_king_ind, button_pass, r7):
+                        global attacking_piece
+                        global attacking_index
+                        global attacking_row
+                        global pawn
+                        pawn = "pawn"
+                        attacking_piece = pawn
+                        attacking_index = index_stored
+                        attacking_row = row_stored
                         print("pawn")
                         return True
                 # knight - need index and row
@@ -187,9 +574,13 @@ def black_in_check():
                     # get index
                     index_stored = i
                     # get row of piece (row_stored)
-                    global row_stored
                     row_stored = get_piece_row()
                     if knight_move(black_king_ind, black_king_row):
+                        global knight
+                        knight = "knight"
+                        attacking_piece = knight
+                        attacking_index = index_stored
+                        attacking_row = row_stored
                         print("knight")
                         return True
                 if buttons[i]["image"] in white_b:
@@ -198,6 +589,11 @@ def black_in_check():
                     # get row of piece (row_stored)
                     row_stored = get_piece_row()
                     if bishop_move(black_king_ind, black_king_row):
+                        global bishop
+                        bishop = "bishop"
+                        attacking_piece = bishop
+                        attacking_index = index_stored
+                        attacking_row = row_stored
                         print("bishop")
                         return True
                 if buttons[i]["image"] in white_r:
@@ -206,6 +602,11 @@ def black_in_check():
                     # get row of piece (row_stored)
                     row_stored = get_piece_row()
                     if rook_move(black_king_ind, black_king_row):
+                        global rook
+                        rook = "rook"
+                        attacking_piece = rook
+                        attacking_index = index_stored
+                        attacking_row = row_stored
                         print("rook")
                         return True
                 if buttons[i]["image"] in white_q:
@@ -214,12 +615,24 @@ def black_in_check():
                     # get row of piece (row_stored)
                     row_stored = get_piece_row()
                     if queen_move(black_king_ind, black_king_row):
+                        global queen
+                        queen = "queen"
+                        attacking_piece = queen
+                        attacking_index = index_stored
+                        attacking_row = row_stored
                         print("queen")
                         return True
                 if buttons[i]["image"] in white_ki:
                     # get index
                     index_stored = i
-                    if king_move(black_king_ind):
+                    # get row of piece (row_stored)
+                    row_stored = get_piece_row()
+                    if king_move(black_king_ind, black_king_row):
+                        global king
+                        king = "king"
+                        attacking_piece = king
+                        attacking_index = index_stored
+                        attacking_row = row_stored
                         print("king")
                         return True
 
@@ -332,20 +745,26 @@ def check_pawn_promotion(index_new):
 
 
 # Defines legal moves for king. Works for both black and white
-def king_move(index_new):
+def king_move(index_new, row):
+    edges = [0, 7, 8, 15, 16, 23, 24, 31, 32, 39, 40, 47, 48, 55, 56, 63]
     diff = index_new - index_stored
+    new_row = row_stored - row
     clear = False
     # left and right
     if abs(diff) == 1:
-        clear = True
+        # bug where king could travel across the board
+        if index_new in edges and index_stored in edges:
+            return False
+        else:
+            clear = True
     # up and down
     elif abs(diff) == 8:
         clear = True
     # right diagonal
-    elif abs(diff) == 7:
+    elif abs(diff) == 7 and new_row != 0:
         clear = True
     # Left diagonal
-    elif abs(diff) == 9:
+    elif abs(diff) == 9 and abs(new_row) == 1:
         clear = True
     # castling
     elif abs(diff) == 2:
@@ -398,6 +817,8 @@ def queen_move(index_new, row):
         # bug where white square queen could go along diagonal and climb one square (same as bishop)
         if index_new in green_squares and index_stored in white_squares:
             return False
+        if index_new in white_squares and index_stored in green_squares:
+            return False
         # checks if squares between are empty
         lower = index_stored
         upper = index_new
@@ -413,6 +834,8 @@ def queen_move(index_new, row):
     elif diff % 9 == 0:
         # bug where green green square queen could go along diagonal and climb one square (same as bishop)
         if index_new in white_squares and index_stored in green_squares:
+            return False
+        if index_new in green_squares and index_stored in white_squares:
             return False
         # checks if squares between are empty
         lower = index_stored
@@ -467,6 +890,8 @@ def bishop_move(index_new, row):
         # bug where white bishop could go along diagonal and climb one square
         if index_new in green_squares and index_stored in white_squares:
             return False
+        if index_new in white_squares and index_stored in green_squares:
+            return False
         # checks if squares between are empty
         lower = index_stored
         upper = index_new
@@ -482,6 +907,8 @@ def bishop_move(index_new, row):
     elif diff % 9 == 0 and new_row != 0:
         # bug where green bishop could go along diagonal and climb one square
         if index_new in white_squares and index_stored in green_squares:
+            return False
+        if index_new in green_squares and index_stored in white_squares:
             return False
         # checks if squares between are empty
         lower = index_stored
@@ -513,10 +940,10 @@ def knight_move(index_new, row):
     elif abs(diff) == 10 and abs(row_new) == 1:
         return True
     # up or down 2 and right 1 or left 1
-    elif abs(diff) == 15:
+    elif abs(diff) == 15 and abs(row_new) == 2:
         return True
     # up or down 2 and left 1 or right 1
-    elif abs(diff) == 17:
+    elif abs(diff) == 17 and abs(row_new) == 2:
         return True
     else:
         return False
@@ -731,7 +1158,7 @@ def button_clicked(button, index, row):
                     button_pressed = 0
             # Checks legality of king moves
             elif button_stored["image"] in white_ki:
-                if king_move(index):
+                if king_move(index, row):
                     wh_king_moved = True
                     can_move = True
                 else:
@@ -761,7 +1188,10 @@ def button_clicked(button, index, row):
                     return
                 # is black king in check?
                 if black_in_check():
-                    messagebox.showinfo(title="Check!", message="Black's king is now in check!")
+                    if black_in_mate():
+                        messagebox.showinfo(title="Checkmate!", message="Black's king got mated!")
+                    else:
+                        messagebox.showinfo(title="Check!", message="Black's king is now in check!")
                 # Now it's blacks turn
                 white_turn = False
 
@@ -838,7 +1268,7 @@ def button_clicked(button, index, row):
                     can_move = True
             # Checks legality of king moves
             elif button_stored["image"] in black_ki:
-                if king_move(index):
+                if king_move(index, row):
                     bl_king_moved = True
                     can_move = True
                 else:

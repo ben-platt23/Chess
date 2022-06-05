@@ -3,12 +3,11 @@
 ### *Updated 12/23/2021
 ### Fully functioning chess game made in python! GUI made using Tkinter. Note that this project is not perfect by any means and may still include bugs (either weird visuals or pieces not moving like they should. Although I think i squashed most of them). But this was just meant as a fun winter break project so I could learn more python.
 
+### Game Demonstration with piece movement and capture
 ![ChessFirst](https://user-images.githubusercontent.com/86609189/172069907-03a3f007-5be7-43b2-9b41-8c40f10b4a44.gif)
 
-
-
-
-
+### Putting the king into check. Cannot make illegal moves when in check.
+![ChessSecond](https://user-images.githubusercontent.com/86609189/172070071-7ef07fe8-4303-40ea-877b-813624ee03d5.gif)
 
 #### Instructions:
 #### This game was created using an array of 64 buttons that were placed and labeled to look and feel exactly like a chess board.

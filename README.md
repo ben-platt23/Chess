@@ -17,7 +17,7 @@
 #### --pip install playsound
 #### Images:
 #### --pip install PIL
-
+&emsp;
 #### Instructions:
 #### This game was created using an array of 64 buttons that were placed and labeled to look and feel exactly like a chess board.
 #### -white pieces move first, then black

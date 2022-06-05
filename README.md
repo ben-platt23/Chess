@@ -26,7 +26,7 @@
 #### -If the first button pressed is empty, nothing will happen and the user must select a piece to move. If the move is not defined as a legal move for the piece, nothing will happen and the user must select the piece and try again.
 #### -If the move would place the current teams king into check, an error window will popup and the current team will have to input a move that doesn't put their king into check.
 #### -If no legal move can be found, then the team currently in check has been mated and loses.
-
+&emsp;
 ### Features not included (for simplicities sake):
 #### -En passant move for pawns
 #### -Stalemate match result 

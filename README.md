@@ -10,7 +10,7 @@
 ![ChessSecond](https://user-images.githubusercontent.com/86609189/172070071-7ef07fe8-4303-40ea-877b-813624ee03d5.gif)
 
 &emsp;
-#### Extensions required to run in python:
+### Extensions required to run in python:
 #### GUI:
 #### --pip install tk
 #### Sounds:
@@ -18,7 +18,7 @@
 #### Images:
 #### --pip install PIL
 &emsp;
-#### Instructions:
+### Instructions:
 #### This game was created using an array of 64 buttons that were placed and labeled to look and feel exactly like a chess board.
 #### -white pieces move first, then black
 #### -press the button for the piece that you want to move, then press the button for the square that you want to move the piece to
@@ -27,7 +27,6 @@
 #### -If the move would place the current teams king into check, an error window will popup and the current team will have to input a move that doesn't put their king into check.
 #### -If no legal move can be found, then the team currently in check has been mated and loses.
 
-### Also all the code was written in the same file because tkinter is weird with having different files/classes. To compensate I tried to organize the sections better.
 ### Features not included (for simplicities sake):
 #### -En passant move for pawns
 #### -Stalemate match result 

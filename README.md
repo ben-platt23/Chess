@@ -9,6 +9,15 @@
 ### Putting the king into check. Cannot make illegal moves when in check.
 ![ChessSecond](https://user-images.githubusercontent.com/86609189/172070071-7ef07fe8-4303-40ea-877b-813624ee03d5.gif)
 
+&emsp;
+#### Extensions required to run in python:
+#### GUI:
+#### --pip install tk
+#### Sounds:
+#### --pip install playsound
+#### Images:
+#### --pip install PIL
+
 #### Instructions:
 #### This game was created using an array of 64 buttons that were placed and labeled to look and feel exactly like a chess board.
 #### -white pieces move first, then black
@@ -24,13 +33,3 @@
 #### -Stalemate match result 
 #### -Checkmate (Although you should quickly figure out if you are in checkmate. The game won't let you proceed)
 #### -Restart game (Since no end of game conditions are included)
-
-
-&emsp;
-#### Extensions required to run in python:
-#### GUI:
-#### --pip install tk
-#### Sounds:
-#### --pip install playsound
-#### Images:
-#### --pip install PIL

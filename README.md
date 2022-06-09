@@ -11,6 +11,9 @@
 
 &emsp;
 ### Extensions required to run in python:
+
+---
+
 #### GUI:
 #### --pip install tk
 #### Sounds:
@@ -19,6 +22,9 @@
 #### --pip install PIL
 &emsp;
 ### Instructions:
+
+---
+
 #### This game was created using an array of 64 buttons that were placed and labeled to look and feel exactly like a chess board.
 #### -white pieces move first, then black
 #### -press the button for the piece that you want to move, then press the button for the square that you want to move the piece to
@@ -28,6 +34,9 @@
 #### -If no legal move can be found, then the team currently in check has been mated and loses.
 &emsp;
 ### Features not included (for simplicities sake):
+
+---
+
 #### -En passant move for pawns
 #### -Stalemate match result 
 #### -Checkmate (Although you should quickly figure out if you are in checkmate. The game won't let you proceed)

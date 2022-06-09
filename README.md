@@ -10,7 +10,7 @@
 ![ChessSecond](https://user-images.githubusercontent.com/86609189/172070071-7ef07fe8-4303-40ea-877b-813624ee03d5.gif)
 
 &emsp;
-### Extensions required to run in python:
+# Extensions required to run in python:
 
 ---
 
@@ -21,7 +21,7 @@
 #### Images:
 #### --pip install PIL
 &emsp;
-### Instructions:
+# Instructions:
 
 ---
 
@@ -33,7 +33,7 @@
 #### -If the move would place the current teams king into check, an error window will popup and the current team will have to input a move that doesn't put their king into check.
 #### -If no legal move can be found, then the team currently in check has been mated and loses.
 &emsp;
-### Features not included (for simplicities sake):
+# Features not included (for simplicities sake):
 
 ---
 

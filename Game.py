@@ -1278,5 +1278,5 @@ board()
 playsound("start.mp3")
 # run tkinter program
 root.mainloop()
-# ---------------------------- Begin: End the Program ----------------------------
+# ---------------------------- End: Run the Program ----------------------------
 

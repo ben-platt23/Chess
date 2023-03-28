@@ -1019,7 +1019,7 @@ class Game:
         # buttons and labels, organized by which row of the board that they are found in. Each button has the same command (button_clicked())
         global buttons
         buttons = [*range(0, 64, 1)]
-        # Row 8
+        # Row 1
         buttons[0] = Button(self.root, bg="#eeeed5", padx=51.5, pady=44.5, activebackground="#B2E77C", image=black_rook_qs, command=lambda: self.button_clicked(buttons[0], 0, 8))
         l8 = Label(text="8", font=("Arial", 22), fg="#7d945d", bg="#eeeed5")
         l8.place(x=5, y=0)
@@ -1039,7 +1039,7 @@ class Game:
         buttons[7] = Button(self.root, bg="#7d945d", padx=51.5, pady=44.5, activebackground="#B2E77C", image=black_rook_ks, command=lambda: self.button_clicked(buttons[7], 7, 8))
         buttons[7].place(x=787.5, y=0)
 
-        # Row 7
+        # Row 2
         buttons[8] = Button(self.root, bg="#7d945d", padx=51.5, pady=44.5, activebackground="#B2E77C", image=black_pawn, command=lambda: self.button_clicked(buttons[8], 8, 7))
         buttons[8].place(x=0, y=112.5)
         l7 = Label(text="7", font=("Arial", 22), fg="#eeeed5", bg="#7d945d")
@@ -1060,7 +1060,7 @@ class Game:
         buttons[15] = Button(self.root, bg="#eeeed5", padx=51.5, pady=44.5, activebackground="#B2E77C", image=black_pawn, command=lambda: self.button_clicked(buttons[15], 15, 7))
         buttons[15].place(x=787.5, y=112.5)
 
-        # Row 6
+        # Row 3
         buttons[16] = Button(self.root, bg="#eeeed5", padx=51.5, pady=44.5, activebackground="#B2E77C", command=lambda: self.button_clicked(buttons[16], 16, 6))
         buttons[16].place(x=0, y=225)
         l6 = Label(text="6", font=("Arial", 22), fg="#7d945d", bg="#eeeed5")
@@ -1080,7 +1080,7 @@ class Game:
         buttons[23] = Button(self.root, bg="#7d945d", padx=51.5, pady=44.5, activebackground="#B2E77C", command=lambda: self.button_clicked(buttons[23], 23, 6))
         buttons[23].place(x=787.5, y=225)
 
-        # Row 5
+        # Row 4
         buttons[24] = Button(self.root, bg="#7d945d", padx=51.5, pady=44.5, activebackground="#B2E77C", command=lambda: self.button_clicked(buttons[24], 24, 5))
         buttons[24].place(x=0, y=337.5)
         l5 = Label(text="5", font=("Arial", 22), fg="#eeeed5", bg="#7d945d")
@@ -1100,7 +1100,7 @@ class Game:
         buttons[31] = Button(self.root, bg="#eeeed5", padx=51.5, pady=44.5, activebackground="#B2E77C", command=lambda: self.button_clicked(buttons[31], 31, 5))
         buttons[31].place(x=787.5, y=337.5)
 
-        # Row 4
+        # Row 5
         buttons[32] = Button(self.root, bg="#eeeed5", padx=51.5, pady=44.5, activebackground="#B2E77C", command=lambda: self.button_clicked(buttons[32], 32, 4))
         buttons[32].place(x=0, y=450)
         l4 = Label(text="4", font=("Arial", 22), fg="#7d945d", bg="#eeeed5")
@@ -1120,7 +1120,7 @@ class Game:
         buttons[39] = Button(self.root, bg="#7d945d", padx=51.5, pady=44.5, activebackground="#B2E77C", command=lambda: self.button_clicked(buttons[39], 39, 4))
         buttons[39].place(x=787.5, y=450)
 
-        # Row 3
+        # Row 6
         buttons[40] = Button(self.root, bg="#7d945d", padx=51.5, pady=44.5, activebackground="#B2E77C", command=lambda: self.button_clicked(buttons[40], 40, 3))
         buttons[40].place(x=0, y=562.5)
         l3 = Label(text="3", font=("Arial", 22), fg="#eeeed5", bg="#7d945d")
@@ -1140,7 +1140,7 @@ class Game:
         buttons[47] = Button(self.root, bg="#eeeed5", padx=51.5, pady=44.5, activebackground="#B2E77C", command=lambda: self.button_clicked(buttons[47], 47, 3))
         buttons[47].place(x=787.5, y=562.5)
 
-        # Row 2
+        # Row 7
         buttons[48] = Button(self.root, bg="#eeeed5", padx=51.5, pady=44.5, activebackground="#B2E77C", image=white_pawn, command=lambda: self.button_clicked(buttons[48], 48, 2))
         buttons[48].place(x=0, y=675)
         l2 = Label(text="2", font=("Arial", 22), fg="#7d945d", bg="#eeeed5")
@@ -1160,7 +1160,7 @@ class Game:
         buttons[55] = Button(self.root, bg="#7d945d", padx=51.5, pady=44.5, activebackground="#B2E77C", image=white_pawn, command=lambda: self.button_clicked(buttons[55], 55, 2))
         buttons[55].place(x=787.5, y=675)
 
-        # Row 1 has many more labels (for columns)
+        # Row 8 has many more labels (for columns)
         buttons[56] = Button(self.root, bg="#7d945d", padx=51.5, pady=44.5, activebackground="#B2E77C", image=white_rook_qs, command=lambda: self.button_clicked(buttons[56], 56, 1))
         buttons[56].place(x=0, y=787.5)
 

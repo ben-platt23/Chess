@@ -4,6 +4,7 @@ from tkinter import *
 from tkinter import messagebox, Tk
 from PIL import Image, ImageTk
 from playsound import playsound
+import client
 
 class Game:
     # ---------------------------- Begin: Variables and Initializations ----------------------------
@@ -16,6 +17,9 @@ class Game:
     white_turn = True
     button_pressed = 0
     capture = False
+
+    # online only: set the color of pieces that the client will use
+    pieces = "UNKNOWN"
 
     # Some castling variables
     wh_king_moved = False
@@ -1273,11 +1277,23 @@ class Game:
     # ---------------------------- End: Board and Image Construction ----------------------------
 
 # ---------------------------- Begin: Run the Program ----------------------------
-# create board
+# TO DO: allow the user to choose to play online using input?
+# Connect to the TCP server socket
+client = client.Client()
+# These initial calls will run until the client is connected to another client via the server.
+client.start()
+client.client_send()
+# create the game object
 g = Game()
+# create board once the client is connected successfully and the team is set (online only)
 g.board()
 # start game sound
 playsound("start.mp3")
+# Set the color pieces that the client can use
+g.pieces = client.pieces
+# debugging piece color issue
+# message = input("")
+# print(g.pieces)
 # run tkinter program
 g.root.mainloop()
 # ---------------------------- End: Run the Program ----------------------------

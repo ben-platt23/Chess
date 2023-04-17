@@ -53,7 +53,7 @@ class Client:
             self.client.send(message.encode('utf-8'))
 
     def start(self):
-        receive_thread = threading.Thread(target=client_receive)
+        receive_thread = threading.Thread(target=self.client_receive)
         receive_thread.start()
 
         # send_thread = threading.Thread(target=self.client_send)

@@ -2,7 +2,9 @@
 # Date: 12/20/2021
 from tkinter import *
 from tkinter import messagebox, Tk
+# If you can't isntall PIL, try installing Pillow instead "pip install Pillow" since PIL is a fork of Pillow
 from PIL import Image, ImageTk
+# if playsound raises an error try "pip install PyObjC"
 from playsound import playsound
 import client
 

@@ -44,7 +44,8 @@ class Client:
                 message = input("")
                 self.client.send(message.encode('utf-8'))
                 message_caps = message.upper()
-                if message_caps == "AGREE" or message_caps == "AGREE BLACK" or message_caps == "AGREE WHITE":
+                if message_caps == "AGREE" or message_caps == "AGREE BLACK" or message_caps == "AGREE WHITE" \
+                        or message_caps == "READY":
                     break
         # Just sending the message that is passed through the argument. This is when the GUI has launched,
         # and we're just sending piece data
@@ -52,7 +53,7 @@ class Client:
             self.client.send(message.encode('utf-8'))
 
     def start(self):
-        receive_thread = threading.Thread(target=self.client_receive)
+        receive_thread = threading.Thread(target=client_receive)
         receive_thread.start()
 
         # send_thread = threading.Thread(target=self.client_send)

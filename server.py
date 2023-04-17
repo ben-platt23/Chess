@@ -140,14 +140,14 @@ def handle_client(client):
 
             # Handle negotiating team choices
             if message_caps == "WHITE":
-                client.send("Choice request sent! Game will start automatically if accepted...\n".encode('utf-8'))
+                client.send("Choice request sent!\n".encode('utf-8'))
                 pair.send("Your opponent has requested to be the WHITE pieces, making you the BLACK pieces, \n"
                           "please enter 'AGREE BLACK' to start the game on these terms. If you don't like this, type \n"
                           "'DENY' to inform your opponent. Then continue negotiating, or type 'FLIP A COIN' to have \n"
                           "the server decide!".encode('utf-8'))
 
             if message_caps == "BLACK":
-                client.send("Choice request sent! Game will start automatically if accepted...\n".encode('utf-8'))
+                client.send("Choice request sent!\n".encode('utf-8'))
                 pair.send("Your opponent has requested to be the BLACK pieces, making you the WHITE pieces, \n"
                           "please enter 'AGREE WHITE' to start the game on these terms. If you don't like this, type \n"
                           "'DENY' to inform your opponent. Then continue negotiating, or type 'FLIP A COIN' to have \n"
@@ -157,17 +157,23 @@ def handle_client(client):
                 client.send("YOUR PIECES ARE: BLACK\n".encode('utf-8'))
                 client.send("Starting game...".encode('utf-8'))
                 in_game.append(client)
+                pair.send("Your opponent has agreed to be the black pieces! Ready to start? "
+                          "Enter 'READY' to begin the match!\n")
                 pair.send("YOUR PIECES ARE: WHITE\n".encode('utf-8'))
-                pair.send("Starting game...".encode('utf-8'))
                 in_game.append(pair)
 
             if message_caps == "AGREE WHITE":
                 client.send("YOUR PIECES ARE: WHITE\n".encode('utf-8'))
                 client.send("Starting game...".encode('utf-8'))
                 in_game.append(client)
+                pair.send("Your opponent has agreed to be the black pieces! Ready to start? "
+                          "Enter 'READY' to begin the match!\n".encode('utf-8'))
                 pair.send("YOUR PIECES ARE: BLACK\n".encode('utf-8'))
-                pair.send("Starting game...".encode('utf-8'))
                 in_game.append(pair)
+
+            # handle starting the game after the client enters "READY"
+            if message_caps == "READY":
+                client.send("Starting game...\n".encode('utf-8'))
 
             # Handle starting the game after coin flip
             if message_caps == "AGREE":

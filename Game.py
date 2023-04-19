@@ -14,7 +14,6 @@ class Game:
     # ---------------------------- Begin: Variables and Initializations ----------------------------
     # initialize root and window geometry
     root: Tk = Tk()
-    root.title("Chess - Ben Platt")
     root.geometry("900x900")
 
     # Variables that define the start of the game. White goes first, no buttons have been pressed, nothing has been captured
@@ -1690,6 +1689,7 @@ if message_caps == "Y":
     g.play_online = True
     g.start_online()
 else:
+    g.root.title("Singleplayer Chess")
     g.play_online = False
     print("Starting game...")
 # create board once the client is connected successfully and the team is set (online only)
@@ -1699,6 +1699,9 @@ playsound("start.mp3")
 # Set the color pieces that the client can use (online only)
 if g.play_online:
     g.pieces = g.client.pieces
+    player_name = g.client.alias
+    window_title = "Online Chess. Player name: " + player_name + ", Pieces Color: " + g.pieces
+    g.root.title(window_title)
 # Run an update thread to wait for white to make the first move
 if g.pieces == "BLACK":
     update_thread = threading.Thread(target=g.update_board)

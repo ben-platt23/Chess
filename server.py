@@ -1,6 +1,7 @@
 import threading
 import socket
 import random
+import time
 
 # REFERENCE VIDEO FOR THIS
 # https://www.youtube.com/watch?v=nmzzeAvQHp8
@@ -128,10 +129,12 @@ def handle_client(client):
                 if coin == 0:
                     client.send("YOUR PIECES ARE: WHITE\n".encode('utf-8'))
                     pair.send("Your opponent has opted to flip a coin, here are the results.\n".encode('utf-8'))
+                    time.sleep(1)
                     pair.send("YOUR PIECES ARE: BLACK\n".encode('utf-8'))
                 else:
                     client.send("YOUR PIECES ARE: BLACK\n".encode('utf-8'))
                     pair.send("Your opponent has opted to flip a coin, here are the results.\n".encode('utf-8'))
+                    time.sleep(1)
                     pair.send("YOUR PIECES ARE: WHITE\n".encode('utf-8'))
                 client.send("Please enter 'AGREE' to start game on these terms or enter 'DENY' to reject "
                             "these terms\n".encode('utf-8'))
@@ -178,9 +181,9 @@ def handle_client(client):
             # Handle starting the game after coin flip
             if message_caps == "AGREE":
                 if pair in in_game:
-                    client.send("Starting game...\n".encode('utf-8'))
+                    client.send("Both opponents agree to the terms! Please enter 'READY' to start the game\n".encode('utf-8'))
                     in_game.append(client)
-                    pair.send("Starting game...\n".encode('utf-8'))
+                    pair.send("Both opponents agree to the terms! Please enter 'READY' to start the game\n".encode('utf-8'))
                 else:
                     client.send(("Awaiting agreement from " + clients[pair] + "...").encode('utf-8'))
                     in_game.append(client)

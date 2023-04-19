@@ -1,5 +1,5 @@
 # Author: Ben Platt
-# Date: 12/20/2021
+# Last Update: 4/18/2023
 import time
 from tkinter import *
 from tkinter import messagebox, Tk
@@ -350,9 +350,9 @@ class Game:
 
     # ---------------------------- Begin: Special Methods for Online Play ----------------------------
     # convert the set of moves into a string that can be sent over TCP
-    def combine_to_string(self, num1, num2, num3=-1):
+    def combine_to_string(self, num1, num2, num3=-2):
         # default value, not castling
-        if num3 == -1:
+        if num3 == -2:
             num1 = str(num1)
             num2 = str(num2)
             result = num1 + " " + num2
@@ -415,7 +415,7 @@ class Game:
         elif len(move_list) == 5:
             store_index = move_list[0]
             new_index = move_list[2]
-            castle_move = move_list[4]
+            extra_move = move_list[4]
 
         if self.pieces == "WHITE":
             # perform the configuration if other client is black
@@ -431,6 +431,17 @@ class Game:
             #     playsound("capture.wav")
             button_new.config(image=button_old["image"])
             button_old.config(image="")
+            # castles for BLACK pieces, since this is waiting for BLACKs move
+            if len(move_list) == 5 and extra_move == -1:
+                diff = new_index - store_index
+                # castle queenside, just need to move the rook
+                if diff == -2:
+                    buttons[3].config(image=buttons[0]["image"])
+                    buttons[0].config(image="")
+                # castle kingside
+                elif diff == 2:
+                    buttons[5].config(image=buttons[7]["image"])
+                    buttons[7].config(image="")
             # if self.white_in_check():
             #     messagebox.showinfo(title="Check!", message="White's king is now in check!")
             self.white_turn = True
@@ -449,6 +460,17 @@ class Game:
             #     playsound("capture.wav")
             button_new.config(image=button_old["image"])
             button_old.config(image="")
+            # castles for WHITE pieces, since this is waiting for WHITEs move
+            if len(move_list) == 5 and extra_move == -1:
+                diff = new_index - store_index
+                # castle queenside
+                if diff == -2:
+                    buttons[59].config(image=buttons[56]["image"])
+                    buttons[56].config(image="")
+                # castle kingside
+                elif diff == 2:
+                    buttons[61].config(image=buttons[63]["image"])
+                    buttons[63].config(image="")
             # if self.white_in_check():
             #     messagebox.showinfo(title="Check!", message="White's king is now in check!")
             self.white_turn = False
@@ -797,6 +819,8 @@ class Game:
 
         # local variable to determine if a piece can legally move to chosen space
         can_move = False
+        # Online only - local variables to tell the other client to check for castling or pawn promotion
+        check_castling = False
 
         # ---------------------------- SINGLEPLAYER CODE ----------------------------
         # White turn singleplayer
@@ -1097,6 +1121,7 @@ class Game:
                         if self.king_move(index, row):
                             self.wh_king_moved = True
                             can_move = True
+                            check_castling = True
                         else:
                             self.button_pressed = 0
                     # if move is legal, captures space
@@ -1127,9 +1152,16 @@ class Game:
                         if self.black_in_check():
                             messagebox.showinfo(title="Check!", message="Black's king is now in check!")
                         # ********** UNIQUE ********** SEND OTHER CLIENT INFORMATION ABOUT THIS MOVE
-                        piece_select = self.combine_to_string(real_index_stored, row_stored)
-                        piece_move = self.combine_to_string(index, row)
-                        result = piece_select +  " " + piece_move
+                        if not check_castling:
+                            piece_select = self.combine_to_string(real_index_stored, row_stored)
+                            piece_move = self.combine_to_string(index, row)
+                            result = piece_select +  " " + piece_move
+                        if check_castling:
+                            piece_select = self.combine_to_string(real_index_stored, row_stored)
+                            piece_move = self.combine_to_string(index, row, -1)
+                            result = piece_select + " " + piece_move
+                            # set it back to False so it doesn't keep checking later
+                            check_castling = False
                         # print(real_index_stored)
                         # print(row_stored)
                         self.client.client_send(result)
@@ -1217,6 +1249,7 @@ class Game:
                         if self.king_move(index, row):
                             self.bl_king_moved = True
                             can_move = True
+                            check_castling = True
                         else:
                             self.button_pressed = 0
                     # if move is legal, captures space
@@ -1247,9 +1280,14 @@ class Game:
                         if self.white_in_check():
                             messagebox.showinfo(title="Check!", message="White's king is now in check!")
                         # ********** UNIQUE ********** SEND OTHER CLIENT INFORMATION ABOUT THIS MOVE
-                        piece_select = self.combine_to_string(real_index_stored, row_stored)
-                        piece_move = self.combine_to_string(index, row)
-                        result = piece_select + " " + piece_move
+                        if not check_castling:
+                            piece_select = self.combine_to_string(real_index_stored, row_stored)
+                            piece_move = self.combine_to_string(index, row)
+                            result = piece_select + " " + piece_move
+                        elif check_castling:
+                            piece_select = self.combine_to_string(real_index_stored, row_stored)
+                            piece_move = self.combine_to_string(index, row, -1)
+                            result = piece_select + " " + piece_move
                         self.client.client_send(result)
                         # Now it's white's turn
                         self.white_turn = True

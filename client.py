@@ -6,16 +6,17 @@ class Client:
     host_server = '192.168.1.204'
     port = 50000
     pieces = "UNKNOWN"
-
-    alias = input("What's your name? (Note: this will be displayed to other users)")
+    alias = "UNKNOWN"
+    # stored message that can be accessed by the game program
+    message = ""
 
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.connect((host_server, port))
 
     def client_receive(self):
         while True:
             try:
                 message = self.client.recv(1024).decode('utf-8')
+                message_caps = message.upper()
                 # send the server my alias
                 if message == "What is your name?":
                     self.client.send(self.alias.encode('utf-8'))
@@ -26,10 +27,17 @@ class Client:
                 elif message == "YOUR PIECES ARE: BLACK" or message == "YOUR PIECES ARE: BLACK\n":
                     self.pieces = "BLACK"
                     print(message)
+                elif message == "Starting game..." or message == "Starting game...\n":
+                    print(message)
+                    self.message = ""
+                elif message_caps == "READY" or message_caps == "READY\n":
+                    self.message = ""
                 else:
-                    # TO DO - take the piece data that is received and turn it into a stored
+                    # Take the piece data that is received and turn it into a stored
                     # variable to do moves with
                     print(message)
+                    self.message = message
+                    # print(message)
             except:
                 print("Error, closing connection")
                 self.client.close()
@@ -53,11 +61,16 @@ class Client:
             self.client.send(message.encode('utf-8'))
 
     def start(self):
+        self.client.connect((self.host_server, self.port))
+
         receive_thread = threading.Thread(target=self.client_receive)
         receive_thread.start()
 
         # send_thread = threading.Thread(target=self.client_send)
         # send_thread.start()
+
+    def get_alias(self):
+        self.alias = input("What is your name? (Note: this will be displayed to other users)")
 
     def set_message(self, message):
         self.message = message

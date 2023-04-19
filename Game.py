@@ -1,5 +1,6 @@
 # Author: Ben Platt
 # Date: 12/20/2021
+import time
 from tkinter import *
 from tkinter import messagebox, Tk
 # If you can't install PIL, try installing Pillow instead "pip install Pillow" since PIL is a fork of Pillow
@@ -7,6 +8,7 @@ from PIL import Image, ImageTk
 # if playsound raises an error try "pip install PyObjC"
 from playsound import playsound
 import client
+import threading
 
 class Game:
     # ---------------------------- Begin: Variables and Initializations ----------------------------
@@ -20,8 +22,13 @@ class Game:
     button_pressed = 0
     capture = False
 
-    # online only: set the color of pieces that the client will use
+    # online only
+    # pieces = color of pieces
     pieces = "UNKNOWN"
+    # boolean if the user will play online chess
+    play_online = False
+    # client class object from client.py
+    client = client.Client()
 
     # Some castling variables
     wh_king_moved = False
@@ -341,6 +348,113 @@ class Game:
                 return False
     # ---------------------------- End: Pawn Promotion ----------------------------
 
+    # ---------------------------- Begin: Special Methods for Online Play ----------------------------
+    # convert the set of moves into a string that can be sent over TCP
+    def combine_to_string(self, num1, num2, num3=-1):
+        # default value, not castling
+        if num3 == -1:
+            num1 = str(num1)
+            num2 = str(num2)
+            result = num1 + " " + num2
+            return result
+        else:
+            num1 = str(num1)
+            num2 = str(num2)
+            num3 = str(num3)
+            result = num1 + " " + num2 + " " + num3
+            return result
+
+    # Convert the received message into a list of ints that can be used as move input
+    def convert_to_list(self, string):
+        result = []
+        start = 0
+        end = 0
+        for i in range(len(string)):
+            # normal case: not the end of the string
+            if string[i] == " ":
+                end = i
+                substring = string[start:end]
+
+                substring = int(substring)
+                result.append(substring)
+                start = i
+            # edge case 1: when the last move is a single digit
+            if i == len(string) - 1 and string[i - 1] == " ":
+                substring = string[i]
+                substring = int(substring)
+                result.append(substring)
+                return result
+            # edge case 2: last move has multiple digits
+            if i == len(string) - 1:
+                end = i
+                substring = string[start:end + 1]
+                substring = int(substring)
+                result.append(substring)
+        return result
+
+    # Multithreading - wait for the client to receive a new message (containing move information)
+    # Step 1: Parse the string and get the move information
+    # Step 2: Convert the list of moves into separate ints
+    # Step 3: Perform the move (configure the buttons and play the move sound)
+    def update_board(self):
+        # wait for message
+        while self.client.message is "":
+            continue
+            # do nothing
+
+        # get list of moves
+        move_string = self.client.message
+        move_list = self.convert_to_list(move_string)
+        # print(move_list)
+
+        # get individual moves
+        if len(move_list) == 4:
+            store_index = move_list[0]
+            new_index = move_list[2]
+            row = move_list[3]
+        elif len(move_list) == 5:
+            store_index = move_list[0]
+            new_index = move_list[2]
+            castle_move = move_list[4]
+
+        if self.pieces == "WHITE":
+            # perform the configuration if other client is black
+            # print(store_index)
+            # print(new_index)
+            button_old = buttons[store_index]
+            button_new = buttons[new_index]
+            # if button["image"] is "":
+            #     # empty space movement sound
+            #     playsound("movement.wav")
+            # elif button["image"] is not "":
+            #     # capture piece sound
+            #     playsound("capture.wav")
+            button_new.config(image=button_old["image"])
+            button_old.config(image="")
+            # if self.white_in_check():
+            #     messagebox.showinfo(title="Check!", message="White's king is now in check!")
+            self.white_turn = True
+            self.client.message = ""
+        elif self.pieces == "BLACK":
+            # perform the configuration if other client is black
+            # print(store_index)
+            # print(new_index)
+            button_old = buttons[store_index]
+            button_new = buttons[new_index]
+            # if button["image"] is "":
+            #     # empty space movement sound
+            #     playsound("movement.wav")
+            # elif button["image"] is not "":
+            #     # capture piece sound
+            #     playsound("capture.wav")
+            button_new.config(image=button_old["image"])
+            button_old.config(image="")
+            # if self.white_in_check():
+            #     messagebox.showinfo(title="Check!", message="White's king is now in check!")
+            self.white_turn = False
+            self.client.message = ""
+        return
+
 
     # ---------------------------- Begin: Piece movement (white and black) ----------------------------
     # Defines legal moves for king. Works for both black and white
@@ -638,6 +752,7 @@ class Game:
         global piece_stored
         global capture
         global index_stored
+        global real_index_stored
         global row_stored
 
         # for pawn promotion
@@ -683,8 +798,9 @@ class Game:
         # local variable to determine if a piece can legally move to chosen space
         can_move = False
 
-        # White turn
-        if self.white_turn is True:
+        # ---------------------------- SINGLEPLAYER CODE ----------------------------
+        # White turn singleplayer
+        if self.play_online is False and self.white_turn is True:
             # First button press - selects the piece to be moved
             if self.button_pressed == 0:
                 # If there is no piece, doesn't select
@@ -793,8 +909,8 @@ class Game:
                     # Now it's blacks turn
                     self.white_turn = False
 
-        # Black turn
-        elif self.white_turn is False:
+        # Black turn singleplayer
+        elif self.play_online is False and self.white_turn is False:
             # First button press - selects the piece to be moved
             if self.button_pressed == 0:
                 # If there is no piece, doesn't select
@@ -894,11 +1010,253 @@ class Game:
                         messagebox.showerror(title="Illegal!", message="That move would put your king into check! Try again")
                         self.button_pressed = 0
                         return
-                    # is black king in check?
+                    # is white king in check?
                     if self.white_in_check():
                         messagebox.showinfo(title="Check!", message="White's king is now in check!")
                     # Now it's white's turn
                     self.white_turn = True
+        # ---------------------------- ONLINE CODE ----------------------------
+        # IF PLAYER IS WHITE PIECES
+        if self.play_online is True and self.pieces == "WHITE":
+            if self.white_turn is True:
+                # First button press - selects the piece to be moved
+                if self.button_pressed == 0:
+                    # If there is no piece, doesn't select
+                    if button["image"] is "":
+                        return
+                    # Only allowed if the piece is white
+                    elif button["image"] in white_pieces:
+                        self.button_pressed = 1
+                        # Stores the button that is pressed
+                        button_stored = button
+                        # Stores the index
+                        real_index_stored = index
+                        index_stored = index
+                        # Stores the row
+                        row_stored = row
+                # Second button press - moves the piece
+                elif self.button_pressed == 1:
+                    # prevents self destruct
+                    if button_stored is button:
+                        self.button_pressed = 0
+                        return
+                    # prevents friendly fire
+                    elif button["image"] in white_pieces:
+                        self.button_pressed = 0
+                        return
+                    # Checks legality of pawn moves
+                    if button_stored["image"] in white_p:
+                        if self.white_pawn_move(index, button, row2):
+                            # check for promotion condition, then promotes
+                            if self.check_pawn_promotion(index):
+                                pawn_index = index
+                                # pause game while white team selects the promotion piece
+                                self.white_pawn_promotion_menu(button)
+                            # if function deems the move legal and the pawn promotion menu isn't mapped, can_move is true
+                            can_move = True
+                        else:
+                            self.button_pressed = 0
+                    # Checks legality of rook moves
+                    elif button_stored["image"] in white_r_qs:
+                        if self.rook_move(index, row):
+                            self.wh_queenside_rook_moved = True
+                            can_move = True
+                        else:
+                            self.button_pressed = 0
+                    elif button_stored["image"] in white_r_ks:
+                        if self.rook_move(index, row):
+                            self.wh_kingside_rook_moved = True
+                            can_move = True
+                        else:
+                            self.button_pressed = 0
+                    elif button_stored["image"] in white_r:
+                        if self.rook_move(index, row):
+                            can_move = True
+                        else:
+                            self.button_pressed = 0
+                    # Checks legality of knight moves
+                    elif button_stored["image"] in white_kn:
+                        if self.knight_move(index, row):
+                            can_move = True
+                        else:
+                            self.button_pressed = 0
+                    # Checks legality of bishop moves
+                    elif button_stored["image"] in white_b:
+                        if self.bishop_move(index, row):
+                            can_move = True
+                        else:
+                            self.button_pressed = 0
+                    # Checks legality of queen moves
+                    elif button_stored["image"] in white_q:
+                        if self.queen_move(index, row):
+                            can_move = True
+                        else:
+                            self.button_pressed = 0
+                    # Checks legality of king moves
+                    elif button_stored["image"] in white_ki:
+                        if self.king_move(index, row):
+                            self.wh_king_moved = True
+                            can_move = True
+                        else:
+                            self.button_pressed = 0
+                    # if move is legal, captures space
+                    if can_move is True:
+                        if button["image"] is "":
+                            # empty space movement sound
+                            playsound("movement.wav")
+                        elif button["image"] is not "":
+                            # capture piece sound
+                            playsound("capture.wav")
+                        self.button_pressed = 0
+                        # reverts if move places black into check
+                        revert1 = button_stored["image"]
+                        revert2 = button["image"]
+                        # Second button that is pressed becomes the new piece
+                        button.config(image=button_stored["image"])
+                        # Deletes the old piece
+                        button_stored.config(image="")
+                        # Does this move place your king into check? if so, reverts and gives you another turn
+                        if self.white_in_check():
+                            button.config(image=revert2)
+                            button_stored.config(image=revert1)
+                            messagebox.showerror(title="Illegal!",
+                                                 message="That move would put your king into check! Try again")
+                            self.button_pressed = 0
+                            return
+                        # is black king in check?
+                        if self.black_in_check():
+                            messagebox.showinfo(title="Check!", message="Black's king is now in check!")
+                        # ********** UNIQUE ********** SEND OTHER CLIENT INFORMATION ABOUT THIS MOVE
+                        piece_select = self.combine_to_string(real_index_stored, row_stored)
+                        piece_move = self.combine_to_string(index, row)
+                        result = piece_select +  " " + piece_move
+                        # print(real_index_stored)
+                        # print(row_stored)
+                        self.client.client_send(result)
+                        # Now it's blacks turn, need to wait for their move
+                        self.white_turn = False
+                        # HERE place an update board thread that waits for the board to update
+                        update_thread = threading.Thread(target=self.update_board)
+                        update_thread.start()
+
+        # IF PLAYER IS BLACK PIECES
+        elif self.play_online is True and self.pieces == "BLACK":
+            if self.white_turn is False:
+                # First button press - selects the piece to be moved
+                if self.button_pressed == 0:
+                    # If there is no piece, doesn't select
+                    if button["image"] is "":
+                        return
+                    # Only allowed if the piece is black
+                    elif button["image"] in black_pieces:
+                        self.button_pressed = 1
+                        # Stores the button that is pressed
+                        button_stored = button
+                        # Stores the index
+                        real_index_stored = index
+                        index_stored = index
+                        # Stores the row
+                        row_stored = row
+                # Second button press - moves the piece
+                elif self.button_pressed == 1:
+                    # prevents self destruct
+                    if button_stored is button:
+                        self.button_pressed = 0
+                        return
+                    # prevents friendly fire
+                    elif button["image"] in black_pieces:
+                        self.button_pressed = 0
+                        return
+                    # Checks legality of pawn moves
+                    if button_stored["image"] in black_p:
+                        if self.black_pawn_move(index, button, row7):
+                            # check for promotion condition, then promotes
+                            if self.check_pawn_promotion(index):
+                                pawn_index = index
+                                self.black_pawn_promotion_menu(button)
+                            # if function deems the move legal, can_move is true
+                            can_move = True
+                        else:
+                            self.button_pressed = 0
+                    # Checks legality of rook moves
+                    elif button_stored["image"] in black_r_qs:
+                        if self.rook_move(index, row):
+                            self.bl_queenside_rook_moved = True
+                            can_move = True
+                        else:
+                            self.button_pressed = 0
+                    elif button_stored["image"] in black_r_ks:
+                        if self.rook_move(index, row):
+                            self.bl_kingside_rook_moved = True
+                            can_move = True
+                        else:
+                            self.button_pressed = 0
+                    elif button_stored["image"] in black_r:
+                        if self.rook_move(index, row):
+                            can_move = True
+                        else:
+                            self.button_pressed = 0
+                    # Checks legality of knight moves
+                    elif button_stored["image"] in black_kn:
+                        if self.knight_move(index, row):
+                            can_move = True
+                        else:
+                            self.button_pressed = 0
+                    # Calls check function for bishop moves
+                    elif button_stored["image"] in black_b:
+                        if self.bishop_move(index, row):
+                            can_move = True
+                        else:
+                            self.button_pressed = 0
+                    # Checks legality of queen moves
+                    elif button_stored["image"] in black_q:
+                        if self.queen_move(index, row):
+                            can_move = True
+                    # Checks legality of king moves
+                    elif button_stored["image"] in black_ki:
+                        if self.king_move(index, row):
+                            self.bl_king_moved = True
+                            can_move = True
+                        else:
+                            self.button_pressed = 0
+                    # if move is legal, captures space
+                    if can_move is True:
+                        if button["image"] is "":
+                            # not capture sound
+                            playsound("movement.wav")
+                        elif button["image"] is not "":
+                            # capture sound
+                            playsound("capture.wav")
+                        self.button_pressed = 0
+                        # reverts if move places black into check
+                        revert1 = button_stored["image"]
+                        revert2 = button["image"]
+                        # Second button that is pressed becomes the new piece
+                        button.config(image=button_stored["image"])
+                        # Deletes the old piece
+                        button_stored.config(image="")
+                        # Does this move put black in check? if so, revert
+                        if self.black_in_check():
+                            button.config(image=revert2)
+                            button_stored.config(image=revert1)
+                            messagebox.showerror(title="Illegal!",
+                                                 message="That move would put your king into check! Try again")
+                            self.button_pressed = 0
+                            return
+                        # is white king in check?
+                        if self.white_in_check():
+                            messagebox.showinfo(title="Check!", message="White's king is now in check!")
+                        # ********** UNIQUE ********** SEND OTHER CLIENT INFORMATION ABOUT THIS MOVE
+                        piece_select = self.combine_to_string(real_index_stored, row_stored)
+                        piece_move = self.combine_to_string(index, row)
+                        result = piece_select + " " + piece_move
+                        self.client.client_send(result)
+                        # Now it's white's turn
+                        self.white_turn = True
+                        # HERE place an update board thread that waits for the board to update
+                        update_thread = threading.Thread(target=self.update_board)
+                        update_thread.start()
+
     # ---------------------------- End: General Button Command ----------------------------
 
 
@@ -1277,25 +1635,36 @@ class Game:
         black_pieces.append(buttons[4]["image"])
         black_ki.append(buttons[4]["image"])
     # ---------------------------- End: Board and Image Construction ----------------------------
+    # ---------------------------- Begin: Start Online Chess----------------------------
+    def start_online(self):
+        # These initial calls will run until the client is connected to another client via the server.
+        self.client.get_alias()
+        self.client.start()
+        self.client.client_send()
 
 # ---------------------------- Begin: Run the Program ----------------------------
-# TO DO: allow the user to choose to play online using input?
-# Connect to the TCP server socket
-client = client.Client()
-# These initial calls will run until the client is connected to another client via the server.
-client.start()
-client.client_send()
 # create the game object
 g = Game()
+# Ask user if they want to play online chess (good for debugging and testing GUI)
+message = input("Play online chess? (Y/N)")
+message_caps = message.upper()
+if message_caps == "Y":
+    g.play_online = True
+    g.start_online()
+else:
+    g.play_online = False
+    print("Starting game...")
 # create board once the client is connected successfully and the team is set (online only)
 g.board()
 # start game sound
 playsound("start.mp3")
-# Set the color pieces that the client can use
-g.pieces = client.pieces
-# debugging piece color issue
-# message = input("")
-# print(g.pieces)
+# Set the color pieces that the client can use (online only)
+if g.play_online:
+    g.pieces = g.client.pieces
+# Run an update thread to wait for white to make the first move
+if g.pieces == "BLACK":
+    update_thread = threading.Thread(target=g.update_board)
+    update_thread.start()
 # run tkinter program
 g.root.mainloop()
 # ---------------------------- End: Run the Program ----------------------------

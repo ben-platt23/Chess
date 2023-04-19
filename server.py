@@ -158,7 +158,7 @@ def handle_client(client):
                 client.send("Starting game...".encode('utf-8'))
                 in_game.append(client)
                 pair.send("Your opponent has agreed to be the black pieces! Ready to start? "
-                          "Enter 'READY' to begin the match!\n")
+                          "Enter 'READY' to begin the match!\n".encode('utf-8'))
                 pair.send("YOUR PIECES ARE: WHITE\n".encode('utf-8'))
                 in_game.append(pair)
 

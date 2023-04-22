@@ -48,6 +48,12 @@ class Game:
     r7 = [*range(48, 56, 1)]
     r8 = [*range(56, 64, 1)]
 
+    # for a bug with bishops and queens going off diagonal
+    black_squares = [1, 3, 5, 7, 8, 10, 12, 14, 17, 19, 21, 23, 24, 26, 28, 30, 33, 35, 37, 39, 40, 42, 44, 46, 49, 51,
+                     53, 55, 56, 58, 60, 62]
+    white_squares = [2, 4, 6, 9, 11, 13, 15, 16, 18, 20, 22, 25, 27, 29, 31, 32, 34, 36, 38, 41, 43, 45, 47, 48, 50, 52,
+                     54, 57, 59, 61, 63]
+
     # ---------------------------- End: Variables and Initializations ----------------------------
 
     # ---------------------------- Begin: Stuff to put white into check ----------------------------
@@ -520,9 +526,9 @@ class Game:
         # handles right diagonal, takes into account that the farthest right position would also be 0 mod 7
         if diff % 7 == 0 and new_row != 0:
             # bug where white square queen could go along diagonal and climb one square (same as bishop)
-            if index_new in green_squares and index_stored in white_squares:
+            if index_new in self.black_squares and index_stored in self.white_squares:
                 return False
-            if index_new in white_squares and index_stored in green_squares:
+            if index_new in self.white_squares and index_stored in self.black_squares:
                 return False
             # checks if squares between are empty
             lower = index_stored
@@ -537,10 +543,10 @@ class Game:
                     break
         # Handles left diagonal, doesn't care about rows because 9 is too large for it to matter
         elif diff % 9 == 0:
-            # bug where green green square queen could go along diagonal and climb one square (same as bishop)
-            if index_new in white_squares and index_stored in green_squares:
+            # bug where black square queen could go along diagonal and climb one square (same as bishop)
+            if index_new in self.white_squares and index_stored in self.black_squares:
                 return False
-            if index_new in green_squares and index_stored in white_squares:
+            if index_new in self.black_squares and index_stored in self.white_squares:
                 return False
             # checks if squares between are empty
             lower = index_stored
@@ -593,9 +599,9 @@ class Game:
         # handles right diagonal, takes into account that the farthest right position would also be 0 mod 7
         if diff % 7 == 0 and new_row != 0:
             # bug where white bishop could go along diagonal and climb one square
-            if index_new in green_squares and index_stored in white_squares:
+            if index_new in self.black_squares and index_stored in self.white_squares:
                 return False
-            if index_new in white_squares and index_stored in green_squares:
+            if index_new in self.white_squares and index_stored in self.black_squares:
                 return False
             # checks if squares between are empty
             lower = index_stored
@@ -611,9 +617,9 @@ class Game:
         # Handles left diagonal, doesn't care about rows because 9 is too large for it to matter
         elif diff % 9 == 0 and new_row != 0:
             # bug where green bishop could go along diagonal and climb one square
-            if index_new in white_squares and index_stored in green_squares:
+            if index_new in self.white_squares and index_stored in self.black_squares:
                 return False
-            if index_new in green_squares and index_stored in white_squares:
+            if index_new in self.black_squares and index_stored in self.white_squares:
                 return False
             # checks if squares between are empty
             lower = index_stored
@@ -756,12 +762,6 @@ class Game:
         global bl_king_moved
         global bl_queenside_rook_moved
         global bl_kingside_rook_moved
-
-        # for a bug with bishops and queens going off diagonal
-        global green_squares
-        global white_squares
-        green_squares = [1, 3, 5, 7, 8, 10, 12, 14, 17, 19, 21, 23, 24, 26, 28, 30, 33, 35, 37, 39, 40, 42, 44, 46, 49, 51, 53, 55, 56, 58, 60, 62]
-        white_squares = [2, 4, 6, 9, 11, 13, 15, 16, 18, 20, 22, 25, 27, 29, 31, 32, 34, 36, 38, 41, 43, 45, 47, 48, 50, 52, 54, 57, 59, 61, 63]
 
         # pawn move stuff, old but don't feel like refactoring
         row2 = [48, 49, 50, 51, 52, 53, 54, 55]
@@ -1621,7 +1621,7 @@ class Game:
         self.client.client_send()
     # ---------------------------- End: Online Chess Init ----------------------------
 
-# ---------------------------- Begin: Run the Program ----------------------------
+# ---------------------------- Begin: Run the Chess Program ----------------------------
 if __name__ == "__main__":
     g = Game()
     # Ask user if they want to play online chess
@@ -1651,4 +1651,3 @@ if __name__ == "__main__":
     # run GUI program
     g.root.mainloop()
 # ---------------------------- End: Run the Program ----------------------------
-

@@ -1,5 +1,6 @@
 # Author: Ben Platt
 # Last Update: 4/18/2023
+import os
 import time
 from tkinter import *
 from tkinter import messagebox, Tk
@@ -819,6 +820,8 @@ class Game:
         check_castling = False
         # quality of life, this colors the selected square to let players know what piece they are going to move
         highlight_color = "#ebe834"
+        capture_sound = 'capture.wav'
+        movement_sound = 'movement.wav'
 
         # ---------------------------- SINGLEPLAYER CODE ----------------------------
         # White turn singleplayer
@@ -911,10 +914,10 @@ class Game:
                 if can_move is True:
                     if button["image"] is "":
                         # empty space movement sound
-                        playsound("movement.wav")
+                        playsound(movement_sound)
                     elif button["image"] is not "":
                         # capture piece sound
-                        playsound("capture.wav")
+                        playsound(capture_sound)
                     self.button_pressed = 0
                     # reverts if move places black into check
                     revert1 = button_stored["image"]
@@ -1023,10 +1026,10 @@ class Game:
                 if can_move is True:
                     if button["image"] is "":
                         # not capture sound
-                        playsound("movement.wav")
+                        playsound(movement_sound)
                     elif button["image"] is not "":
                         # capture sound
-                        playsound("capture.wav")
+                        playsound(capture_sound)
                     self.button_pressed = 0
                     # reverts if move places black into check
                     revert1 = button_stored["image"]
@@ -1139,12 +1142,12 @@ class Game:
                             self.button_pressed = 0
                     # if move is legal, captures space
                     if can_move is True:
-                        if button["image"] is "":
-                            # empty space movement sound
-                            playsound("movement.wav")
-                        elif button["image"] is not "":
-                            # capture piece sound
-                            playsound("capture.wav")
+                        # if button["image"] is "":
+                        #     # empty space movement sound
+                        #     playsound(movement_sound)
+                        # elif button["image"] is not "":
+                        #     # capture piece sound
+                        #     playsound(capture_sound)
                         self.button_pressed = 0
                         # reverts if move places black into check
                         revert1 = button_stored["image"]
@@ -1272,12 +1275,12 @@ class Game:
                             self.button_pressed = 0
                     # if move is legal, captures space
                     if can_move is True:
-                        if button["image"] is "":
-                            # not capture sound
-                            playsound("movement.wav")
-                        elif button["image"] is not "":
-                            # capture sound
-                            playsound("capture.wav")
+                        # if button["image"] is "":
+                        #     # not capture sound
+                        #     playsound(movement_sound)
+                        # elif button["image"] is not "":
+                        #     # capture sound
+                        #     playsound(capture_sound)
                         self.button_pressed = 0
                         # reverts if move places black into check
                         revert1 = button_stored["image"]

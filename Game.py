@@ -775,6 +775,7 @@ class Game:
         global index_stored
         global real_index_stored
         global row_stored
+        global color_stored
 
         # for pawn promotion
         global pawn_index
@@ -820,6 +821,8 @@ class Game:
         can_move = False
         # Online only - local variables to tell the other client to check for castling or pawn promotion
         check_castling = False
+        # quality of life, this colors the selected square to let players know what piece they are going to move
+        highlight_color = "#ebe834"
 
         # ---------------------------- SINGLEPLAYER CODE ----------------------------
         # White turn singleplayer
@@ -838,8 +841,13 @@ class Game:
                     index_stored = index
                     # Stores the row
                     row_stored = row
+                    # store the color of the square and then set the color to a highlight (yellow)
+                    color_stored = button.cget('bg')
+                    button.config(bg=highlight_color)
             # Second button press - moves the piece
             elif self.button_pressed == 1:
+                # set the color of the selected square back to the original
+                button_stored.config(bg=color_stored)
                 # prevents self destruct
                 if button_stored is button:
                     self.button_pressed = 0
@@ -948,8 +956,13 @@ class Game:
                     index_stored = index
                     # Stores the row
                     row_stored = row
+                    # store the color of the square and then set the color to a highlight (yellow)
+                    color_stored = button.cget('bg')
+                    button.config(bg=highlight_color)
             # Second button press - moves the piece
             elif self.button_pressed == 1:
+                # set the color of the selected square back to the original
+                button_stored.config(bg=color_stored)
                 # prevents self destruct
                 if button_stored is button:
                     self.button_pressed = 0
@@ -1057,8 +1070,13 @@ class Game:
                         index_stored = index
                         # Stores the row
                         row_stored = row
+                        # store the color of the square and then set the color to a highlight (yellow)
+                        color_stored = button.cget('bg')
+                        button.config(bg=highlight_color)
                 # Second button press - moves the piece
                 elif self.button_pressed == 1:
+                    # set the color of the selected square back to the original
+                    button_stored.config(bg=color_stored)
                     # prevents self destruct
                     if button_stored is button:
                         self.button_pressed = 0
@@ -1188,8 +1206,13 @@ class Game:
                         index_stored = index
                         # Stores the row
                         row_stored = row
+                        # store the color of the square and then set the color to a highlight (yellow)
+                        color_stored = button.cget('bg')
+                        button.config(bg=highlight_color)
                 # Second button press - moves the piece
                 elif self.button_pressed == 1:
+                    # set the color of the selected square back to the original
+                    button_stored.config(bg=color_stored)
                     # prevents self destruct
                     if button_stored is button:
                         self.button_pressed = 0
@@ -1680,33 +1703,34 @@ class Game:
         self.client.client_send()
 
 # ---------------------------- Begin: Run the Program ----------------------------
-# create the game object
-g = Game()
-# Ask user if they want to play online chess (good for debugging and testing GUI)
-message = input("Play online chess? (Y/N)")
-message_caps = message.upper()
-if message_caps == "Y":
-    g.play_online = True
-    g.start_online()
-else:
-    g.root.title("Singleplayer Chess")
-    g.play_online = False
-    print("Starting game...")
-# create board once the client is connected successfully and the team is set (online only)
-g.board()
-# start game sound
-playsound("start.mp3")
-# Set the color pieces that the client can use (online only)
-if g.play_online:
-    g.pieces = g.client.pieces
-    player_name = g.client.alias
-    window_title = "Online Chess. Player name: " + player_name + ", Pieces Color: " + g.pieces
-    g.root.title(window_title)
-# Run an update thread to wait for white to make the first move
-if g.pieces == "BLACK":
-    update_thread = threading.Thread(target=g.update_board)
-    update_thread.start()
-# run tkinter program
-g.root.mainloop()
+if __name__ == "__main__":
+    # create the game object
+    g = Game()
+    # Ask user if they want to play online chess (good for debugging and testing GUI)
+    message = input("Play online chess? (Y/N)")
+    message_caps = message.upper()
+    if message_caps == "Y":
+        g.play_online = True
+        g.start_online()
+    else:
+        g.root.title("Singleplayer Chess")
+        g.play_online = False
+        print("Starting game...")
+    # create board once the client is connected successfully and the team is set (online only)
+    g.board()
+    # start game sound
+    playsound("start.mp3")
+    # Set the color pieces that the client can use (online only)
+    if g.play_online:
+        g.pieces = g.client.pieces
+        player_name = g.client.alias
+        window_title = "Online Chess. Player name: " + player_name + ", Pieces Color: " + g.pieces
+        g.root.title(window_title)
+    # Run an update thread to wait for white to make the first move
+    if g.pieces == "BLACK":
+        update_thread = threading.Thread(target=g.update_board)
+        update_thread.start()
+    # run tkinter program
+    g.root.mainloop()
 # ---------------------------- End: Run the Program ----------------------------
 

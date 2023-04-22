@@ -418,8 +418,6 @@ class Game:
 
         if self.pieces == "WHITE":
             # perform the configuration if other client is black
-            # print(store_index)
-            # print(new_index)
             button_old = buttons[store_index]
             button_new = buttons[new_index]
             # if button["image"] is "":
@@ -441,14 +439,12 @@ class Game:
                 elif diff == 2:
                     buttons[5].config(image=buttons[7]["image"])
                     buttons[7].config(image="")
-            # if self.white_in_check():
-            #     messagebox.showinfo(title="Check!", message="White's king is now in check!")
             self.white_turn = True
             self.client.message = ""
+            if self.white_in_check():
+                messagebox.showinfo(title="Check!", message="White's king is now in check!")
         elif self.pieces == "BLACK":
-            # perform the configuration if other client is black
-            # print(store_index)
-            # print(new_index)
+            # perform the configuration if other client is white
             button_old = buttons[store_index]
             button_new = buttons[new_index]
             # if button["image"] is "":
@@ -470,10 +466,10 @@ class Game:
                 elif diff == 2:
                     buttons[61].config(image=buttons[63]["image"])
                     buttons[63].config(image="")
-            # if self.white_in_check():
-            #     messagebox.showinfo(title="Check!", message="White's king is now in check!")
             self.white_turn = False
             self.client.message = ""
+            if self.black_in_check():
+                messagebox.showinfo(title="Check!", message="Black's king is now in check!")
         return
 
 

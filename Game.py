@@ -1,12 +1,11 @@
 # Author: Ben Platt
-# Last Update: 4/18/2023
-import os
-import time
+# Last Update: 4/22/2023
 from tkinter import *
 from tkinter import messagebox, Tk
-# If you can't install PIL, try installing Pillow instead "pip install Pillow" since PIL is a fork of Pillow
+# If you can't install PIL (or if you're getting an error with the library, try installing Pillow
+# instead with "pip install Pillow" since PIL is a fork of Pillow
 from PIL import Image, ImageTk
-# if playsound raises an error try "pip install PyObjC"
+# if playsound raises a weird error or doesn't work correctly try "pip install PyObjC"
 from playsound import playsound
 import client
 import threading
@@ -53,6 +52,13 @@ class Game:
                      53, 55, 56, 58, 60, 62]
     white_squares = [2, 4, 6, 9, 11, 13, 15, 16, 18, 20, 22, 25, 27, 29, 31, 32, 34, 36, 38, 41, 43, 45, 47, 48, 50, 52,
                      54, 57, 59, 61, 63]
+
+    # white pawn needs to reach row 1 to promote
+    row1 = [0, 1, 2, 3, 4, 5, 6, 7]
+    # black pawn needs to reach row 8 to promote
+    row8 = [56, 57, 58, 59, 60, 61, 62, 63]
+
+    promotion_buttons = [*range(0, 9, 1)]
 
     # ---------------------------- End: Variables and Initializations ----------------------------
 
@@ -281,43 +287,103 @@ class Game:
 
     # ---------------------------- Begin: Pawn Promotion ----------------------------
     # Creates a separate GUI window that allows the user to select which piece to promote the pawn to.
-    # Destroys the window after piece is selected
+    # Destroys the window after piece is selected. Online: Also sends the promotion information to the server.
+    # Separate functions for white and black promotion since the windows look different.
     def do_black_pawn_promotion(self, button):
         piece_chosen = button["image"]
         buttons[pawn_index].configure(image=piece_chosen)
-        promotion_buttons[4].destroy()
-        promotion_buttons[5].destroy()
-        promotion_buttons[6].destroy()
-        promotion_buttons[7].destroy()
+        # Online only: send promotion info to other client
+        if self.play_online:
+            if button["image"] in black_q:
+                promote = 0
+            elif button["image"] in black_kn:
+                promote = 1
+            elif button["image"] in black_r:
+                promote = 2
+            elif button["image"] in black_b:
+                promote = 3
+            piece_select = self.combine_to_string(real_index_stored, row_stored)
+            piece_move = self.combine_to_string(real_index_new, real_row_new, promote)
+            result = piece_select + " " + piece_move
+            self.client.client_send(result)
+        self.promotion_buttons[4].destroy()
+        self.promotion_buttons[5].destroy()
+        self.promotion_buttons[6].destroy()
+        self.promotion_buttons[7].destroy()
         self.root.geometry("900x900")
 
     def do_white_pawn_promotion(self, button):
         piece_chosen = button["image"]
         buttons[pawn_index].configure(image=piece_chosen)
-        promotion_buttons[0].destroy()
-        promotion_buttons[1].destroy()
-        promotion_buttons[2].destroy()
-        promotion_buttons[3].destroy()
+        # Online only: send promotion info to other client
+        if self.play_online:
+            if button["image"] in white_q:
+                promote = 0
+            elif button["image"] in white_kn:
+                promote = 1
+            elif button["image"] in white_r:
+                promote = 2
+            elif button["image"] in white_b:
+                promote = 3
+            piece_select = self.combine_to_string(real_index_stored, row_stored)
+            piece_move = self.combine_to_string(real_index_new, real_row_new, promote)
+            result = piece_select + " " + piece_move
+            self.client.client_send(result)
+        # remove buttons
+        self.promotion_buttons[0].destroy()
+        self.promotion_buttons[1].destroy()
+        self.promotion_buttons[2].destroy()
+        self.promotion_buttons[3].destroy()
         self.root.geometry("900x900")
-
 
     # Displays and places the buttons for pawn promotion
     def black_pawn_promotion_menu(self, button):
+        # fix the geometry of the GUI window
         self.root.geometry("1013x900")
+        # Pawn promotion buttons - black
+        self.promotion_buttons[4] = Button(self.root, bg="white", padx=51.5, pady=44.5, activebackground="#B2E77C",
+                                      image=black_queen,
+                                      command=lambda: self.do_black_pawn_promotion(self.promotion_buttons[4]))
+        self.promotion_buttons[5] = Button(self.root, bg="white", padx=51.5, pady=44.5, activebackground="#B2E77C",
+                                      image=black_knight,
+                                      command=lambda: self.do_black_pawn_promotion(self.promotion_buttons[5]))
+        self.promotion_buttons[6] = Button(self.root, bg="white", padx=51.5, pady=44.5, activebackground="#B2E77C",
+                                      image=black_rook,
+                                      command=lambda: self.do_black_pawn_promotion(self.promotion_buttons[6]))
+        self.promotion_buttons[7] = Button(self.root, bg="white", padx=51.5, pady=44.5, activebackground="#B2E77C",
+                                      image=black_bishop,
+                                      command=lambda: self.do_black_pawn_promotion(self.promotion_buttons[7]))
         # place buttons
-        promotion_buttons[4].place(x=900, y=900-112.5)
-        promotion_buttons[5].place(x=900, y=900-(2*112.5))
-        promotion_buttons[6].place(x=900, y=900-(3*112.5))
-        promotion_buttons[7].place(x=900, y=900-(4*112.5))
+        self.promotion_buttons[4].place(x=900, y=900-112.5)
+        self.promotion_buttons[5].place(x=900, y=900-(2*112.5))
+        self.promotion_buttons[6].place(x=900, y=900-(3*112.5))
+        self.promotion_buttons[7].place(x=900, y=900-(4*112.5))
+        # add the rook to valid rook images
+        black_r.append(self.promotion_buttons[6]["image"])
 
     def white_pawn_promotion_menu(self, button):
+        # fix the geometry of the GUI window
         self.root.geometry("1013x900")
+        # Create Pawn promotion buttons - White
+        self.promotion_buttons[0] = Button(self.root, bg="white", padx=51.5, pady=44.5, activebackground="#B2E77C",
+                                      image=white_queen,
+                                      command=lambda: self.do_white_pawn_promotion(self.promotion_buttons[0]))
+        self.promotion_buttons[1] = Button(self.root, bg="white", padx=51.5, pady=44.5, activebackground="#B2E77C",
+                                      image=white_knight,
+                                      command=lambda: self.do_white_pawn_promotion(self.promotion_buttons[1]))
+        self.promotion_buttons[2] = Button(self.root, bg="white", padx=51.5, pady=44.5, activebackground="#B2E77C",
+                                      image=white_rook,
+                                      command=lambda: self.do_white_pawn_promotion(self.promotion_buttons[2]))
+        self.promotion_buttons[3] = Button(self.root, bg="white", padx=51.5, pady=44.5, activebackground="#B2E77C",
+                                      image=white_bishop,
+                                      command=lambda: self.do_white_pawn_promotion(self.promotion_buttons[3]))
         # place buttons
-        promotion_buttons[0].place(x=900, y=0)
-        promotion_buttons[1].place(x=900, y=112.5)
-        promotion_buttons[2].place(x=900, y=2*112.5)
-        promotion_buttons[3].place(x=900, y=3*112.5)
-
+        self.promotion_buttons[0].place(x=900, y=0)
+        self.promotion_buttons[1].place(x=900, y=112.5)
+        self.promotion_buttons[2].place(x=900, y=2*112.5)
+        self.promotion_buttons[3].place(x=900, y=3*112.5)
+        # add the rook to valid rook images
+        white_r.append(self.promotion_buttons[2]["image"])
 
     # Pawn promotion checker function - works for black and white
     def check_pawn_promotion(self, index_new):
@@ -425,8 +491,33 @@ class Game:
                 elif diff == 2:
                     buttons[5].config(image=buttons[7]["image"])
                     buttons[7].config(image="")
-            self.white_turn = True
+            # pawn promotion for BLACK pieces
+            elif len(move_list) == 5 and -1 < extra_move <= 3:
+                # promote to queen
+                if extra_move == 0:
+                    button_new.config(image=black_queen)
+                # to knight
+                elif extra_move == 1:
+                    button_new.config(image=black_knight)
+                # to rook
+                elif extra_move == 2:
+                    button_new.config(image=black_rook)
+                # to bishop
+                elif extra_move == 3:
+                    button_new.config(image=black_bishop)
             self.client.message = ""
+            # Will RECURSIVELY create a new thread listening for the promotion piece if there is an enemy pawn in the home row
+            # Pawn promotion: we need to wait and receieve a message detailing what piece it will be promoted to
+            check_promotion = False
+            # check if there is a black pawn in row 8, if so, we need to listen for promotion command
+            for i in self.row8:
+                button_check = buttons[i]
+                if button_check["image"] in black_p:
+                    check_promotion = True
+            if check_promotion:
+                promotion_thread = threading.Thread(target=self.update_board)
+                promotion_thread.start()
+            self.white_turn = True
             if self.white_in_check():
                 messagebox.showinfo(title="Check!", message="White's king is now in check!")
         elif self.pieces == "BLACK":
@@ -447,12 +538,36 @@ class Game:
                 elif diff == 2:
                     buttons[61].config(image=buttons[63]["image"])
                     buttons[63].config(image="")
-            self.white_turn = False
+            # pawn promotion action for WHITE pieces
+            elif len(move_list) == 5 and -1 < extra_move <= 3:
+                # promote to queen
+                if extra_move == 0:
+                    button_new.config(image=white_queen)
+                # to knight
+                elif extra_move == 1:
+                    button_new.config(image=white_knight)
+                # to rook
+                elif extra_move == 2:
+                    button_new.config(image=white_rook)
+                # to bishop
+                elif extra_move == 3:
+                    button_new.config(image=white_bishop)
             self.client.message = ""
+            # Will RECURSIVELY create a new thread listening for the promotion piece if there is an enemy pawn in the home row
+            # Pawn promotion: we need to wait and receieve a message detailing what piece it will be promoted to
+            check_promotion = False
+            # check if there is a black pawn in row 8, if so, we need to listen for promotion command
+            for i in self.row1:
+                button_check = buttons[i]
+                if button_check["image"] in white_p:
+                    check_promotion = True
+            if check_promotion:
+                promotion_thread = threading.Thread(target=self.update_board)
+                promotion_thread.start()
+            self.white_turn = False
             if self.black_in_check():
                 messagebox.showinfo(title="Check!", message="Black's king is now in check!")
         return
-
 
     # ---------------------------- Begin: Piece movement (white and black) ----------------------------
     # Defines legal moves for king. Works for both black and white
@@ -754,6 +869,8 @@ class Game:
         global row_stored
         global color_stored
         global pawn_index
+        global real_index_new
+        global real_row_new
 
         # for castling
         global wh_king_moved
@@ -770,8 +887,11 @@ class Game:
         # Determines if a piece can legally move to chosen space
         can_move = False
 
-        # Online only - helpful local variables to tell the other client to check for castling or pawn promotion
+        # Online only - helpful local variables to tell the other client to check for castling.
+        # Also, variables needed for online pawn promotion
         check_castling = False
+        real_index_new = index
+        real_row_new = row
 
         # Singleplayer only - sounds filenames for piece movement and capture
         capture_sound = 'capture.wav'
@@ -970,7 +1090,7 @@ class Game:
                 if can_move is True:
                     if button["image"] is "":
                         # not capture sound
-                        playsound(movement_sound, block=False)
+                        playsound(movement_sound)
                     elif button["image"] is not "":
                         # capture sound
                         playsound(capture_sound)
@@ -1115,6 +1235,7 @@ class Game:
                         # Now it's blacks turn, but we need to wait for their move in the online game
                         self.white_turn = False
                         # Creates an update thread that waits for the black pieces client to perform a move
+                        # NOTE: this thread accounts for pawn promotion BY ITSELF
                         update_thread = threading.Thread(target=self.update_board)
                         update_thread.start()
 
@@ -1223,7 +1344,7 @@ class Game:
                             piece_select = self.combine_to_string(real_index_stored, row_stored)
                             piece_move = self.combine_to_string(index, row)
                             result = piece_select + " " + piece_move
-                        elif check_castling:
+                        if check_castling:
                             piece_select = self.combine_to_string(real_index_stored, row_stored)
                             piece_move = self.combine_to_string(index, row, -1)
                             result = piece_select + " " + piece_move
@@ -1231,6 +1352,7 @@ class Game:
                         # Now it's white's turn, but we need to wait for their move in the online game
                         self.white_turn = True
                         # Creates an update thread that waits for the white pieces client to perform a move
+                        # NOTE: this thread accounts for pawn promotion BY ITSELF
                         update_thread = threading.Thread(target=self.update_board)
                         update_thread.start()
 
@@ -1250,6 +1372,7 @@ class Game:
         global white_queen
         global white_king
         global white_bishop
+        global white_rook
 
         global white_p
         global white_r_qs
@@ -1280,7 +1403,7 @@ class Game:
         global black_queen
         global black_king
         global black_bishop
-
+        global black_rook
 
         global black_p
         global black_r_qs
@@ -1553,21 +1676,6 @@ class Game:
         lh = Label(text="h", font=("Arial", 20), fg="#7d945d", bg="#eeeed5")
         lh.place(x=883, y=850)
 
-        # pawn promotion global variable
-        global promotion_buttons
-        promotion_buttons = [*range(0, 9, 1)]
-        # Pawn promotion buttons - White
-        promotion_buttons[0] = Button(self.root, bg="white", padx=51.5, pady=44.5, activebackground="#B2E77C", image=white_queen, command=lambda: self.do_white_pawn_promotion(promotion_buttons[0]))
-        promotion_buttons[1] = Button(self.root, bg="white", padx=51.5, pady=44.5, activebackground="#B2E77C", image=white_knight, command=lambda: self.do_white_pawn_promotion(promotion_buttons[1]))
-        promotion_buttons[2] = Button(self.root, bg="white", padx=51.5, pady=44.5, activebackground="#B2E77C", image=white_rook, command=lambda: self.do_white_pawn_promotion(promotion_buttons[2]))
-        promotion_buttons[3] = Button(self.root, bg="white", padx=51.5, pady=44.5, activebackground="#B2E77C", image=white_bishop, command=lambda: self.do_white_pawn_promotion(promotion_buttons[3]))
-
-        # Pawn promotion buttons - black
-        promotion_buttons[4] = Button(self.root, bg="white", padx=51.5, pady=44.5, activebackground="#B2E77C", image=black_queen, command=lambda: self.do_black_pawn_promotion(promotion_buttons[4]))
-        promotion_buttons[5] = Button(self.root, bg="white", padx=51.5, pady=44.5, activebackground="#B2E77C", image=black_knight, command=lambda: self.do_black_pawn_promotion(promotion_buttons[5]))
-        promotion_buttons[6] = Button(self.root, bg="white", padx=51.5, pady=44.5, activebackground="#B2E77C", image=black_rook, command=lambda: self.do_black_pawn_promotion(promotion_buttons[6]))
-        promotion_buttons[7] = Button(self.root, bg="white", padx=51.5, pady=44.5, activebackground="#B2E77C", image=black_bishop, command=lambda: self.do_black_pawn_promotion(promotion_buttons[7]))
-
         # List of white piece images
         # pawn
         white_pieces.append(buttons[48]["image"])
@@ -1576,7 +1684,6 @@ class Game:
         white_pieces.append(buttons[56]["image"])
         white_r_qs.append(buttons[56]["image"])
         white_r_ks.append(buttons[63]["image"])
-        white_r.append(promotion_buttons[2]["image"])
         # knight
         white_pieces.append(buttons[57]["image"])
         white_kn.append(buttons[57]["image"])
@@ -1598,7 +1705,6 @@ class Game:
         black_pieces.append(buttons[0]["image"])
         black_r_qs.append(buttons[0]["image"])
         black_r_ks.append(buttons[7]["image"])
-        black_r.append(promotion_buttons[6]["image"])
         # knight
         black_pieces.append(buttons[1]["image"])
         black_kn.append(buttons[1]["image"])

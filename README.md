@@ -5,6 +5,18 @@
 ### Fully functioning chess game made in python! GUI made using Tkinter. In this program you are able to play chess either singleplayer or online. Note: in order to play online, you must run and connect to Server.py, which is included in this repository.
 ### An important note: The GUI does not currently work as expected on Mac OS systems. The program has been fully tested and developed for windows machines.
 
+## REQUIREMENTS TO RUN:
+### Operating System --> Only works as expected on WINDOWS 10 MACHINES (no Windows 11, mac, linux, etc.)
+### Extensions -->
+#### GUI - Depending on python version, may not need to separately install tkinter:
+#### --pip install tk
+#### Sounds:
+#### --pip install playsound
+#### Images:
+#### --pip install PIL
+#### NOTE: PIL is a fork of the pillow library, if you cannot run the program correctly due to this import, try installing the pillow library.
+#### --pip install pillow
+
 ## Online Specific Instructions
 1). In order to enable online play, you need to run Server.py. For this program to run correctly, you need to change the server IP address to the IP address of the machine that is running Server.py. This change needs to be done on Server.py and CLient.py. See the below images for where this in the code this needs to be done. The variables are called "host" and "host_server"
 
@@ -37,15 +49,6 @@
 #### -If the move would place the current teams king into check, an error window will popup and the current team will have to input a move that doesn't put their king into check.
 #### -If no legal move can be found, then the team currently in check has been mated and loses.
 
-## Extensions required to run the program:
-#### GUI:
-#### --pip install tk
-#### Sounds:
-#### --pip install playsound
-#### Images:
-#### --pip install PIL
-#### NOTE: PIL is a fork of the pillow library, if you cannot run the program correctly due to this import, try installing the pillow library.
-#### --pip install pillow
 
 ## Features not included (for simplicities sake):
 #### -En passant move for pawns

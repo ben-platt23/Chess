@@ -9,6 +9,7 @@ import time
 # host address of server, this is my public IPv4 address
 # Port chosen because it is inactive when I type "netstat" in bash and
 # https://www.reddit.com/r/cybersecurity/comments/mg0lrv/what_is_a_safe_tcp_port_for_me_to_use_for_a/
+# Ben
 host = '192.168.1.204'
 port = 50000
 

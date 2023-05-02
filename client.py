@@ -3,6 +3,9 @@ import threading
 
 
 class Client:
+    # Mark
+    # host_server = '173.73.136.51'
+    # Ben
     host_server = '192.168.1.204'
     port = 50000
     pieces = "UNKNOWN"

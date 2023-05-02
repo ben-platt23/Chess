@@ -8,6 +8,7 @@ from PIL import Image, ImageTk
 # if playsound raises a weird error or doesn't work correctly try "pip install PyObjC"
 from playsound import playsound
 import client
+import timekeeper
 import threading
 
 class Game:
@@ -15,6 +16,10 @@ class Game:
     # initialize root and window geometry
     root: Tk = Tk()
     root.geometry("900x900")
+
+    # Create timekeeper for white and black
+    white_time = timekeeper.Timer("WHITE")
+    black_time = timekeeper.Timer("BLACK")
 
     # Variables that define the start of the game. White goes first, no buttons have been pressed, nothing has been captured
     white_turn = True
@@ -59,7 +64,6 @@ class Game:
     row8 = [56, 57, 58, 59, 60, 61, 62, 63]
 
     promotion_buttons = [*range(0, 9, 1)]
-
     # ---------------------------- End: Variables and Initializations ----------------------------
 
     # ---------------------------- Begin: Stuff to put white into check ----------------------------
@@ -518,6 +522,12 @@ class Game:
                 promotion_thread = threading.Thread(target=self.update_board)
                 promotion_thread.start()
             self.white_turn = True
+            self.black_time.stop()
+            print()
+            print(self.white_time.show())
+            print(self.black_time.show())
+            print()
+            self.white_time.start()
             if self.white_in_check():
                 messagebox.showinfo(title="Check!", message="White's king is now in check!")
         elif self.pieces == "BLACK":
@@ -565,6 +575,12 @@ class Game:
                 promotion_thread = threading.Thread(target=self.update_board)
                 promotion_thread.start()
             self.white_turn = False
+            self.white_time.stop()
+            print()
+            print(self.white_time.show())
+            print(self.black_time.show())
+            print()
+            self.black_time.start()
             if self.black_in_check():
                 messagebox.showinfo(title="Check!", message="Black's king is now in check!")
         return
@@ -1008,6 +1024,13 @@ class Game:
                         messagebox.showinfo(title="Check!", message="Black's king is now in check!")
                     # Now it's blacks turn
                     self.white_turn = False
+                    self.white_time.stop()
+                    # empty print statements in order to separate the times
+                    print()
+                    print(self.white_time.show())
+                    print(self.black_time.show())
+                    print()
+                    self.black_time.start()
 
         # Black turn singleplayer
         elif self.play_online is False and self.white_turn is False:
@@ -1114,6 +1137,12 @@ class Game:
                         messagebox.showinfo(title="Check!", message="White's king is now in check!")
                     # Now it's white's turn
                     self.white_turn = True
+                    self.black_time.stop()
+                    print()
+                    print(self.white_time.show())
+                    print(self.black_time.show())
+                    print()
+                    self.white_time.start()
 
         # ---------------------------- ONLINE CODE ----------------------------
         # IF PLAYER IS WHITE PIECES
@@ -1234,6 +1263,13 @@ class Game:
                         self.client.client_send(result)
                         # Now it's blacks turn, but we need to wait for their move in the online game
                         self.white_turn = False
+                        self.white_time.stop()
+                        # print time usage
+                        print()
+                        print(self.white_time.show())
+                        print(self.black_time.show())
+                        print()
+                        self.black_time.start()
                         # Creates an update thread that waits for the black pieces client to perform a move
                         # NOTE: this thread accounts for pawn promotion BY ITSELF
                         update_thread = threading.Thread(target=self.update_board)
@@ -1351,6 +1387,12 @@ class Game:
                         self.client.client_send(result)
                         # Now it's white's turn, but we need to wait for their move in the online game
                         self.white_turn = True
+                        self.black_time.stop()
+                        print()
+                        print(self.white_time.show())
+                        print(self.black_time.show())
+                        print()
+                        self.white_time.start()
                         # Creates an update thread that waits for the white pieces client to perform a move
                         # NOTE: this thread accounts for pawn promotion BY ITSELF
                         update_thread = threading.Thread(target=self.update_board)
@@ -1740,6 +1782,7 @@ if __name__ == "__main__":
         g.root.title("Singleplayer Chess")
         g.play_online = False
         print("Starting game...")
+        g.white_time.start()
     # create board once the client is connected successfully and the team is set (online only)
     g.board()
     # Game start sound that is run when the GUI is first opened
@@ -1750,8 +1793,11 @@ if __name__ == "__main__":
         player_name = g.client.alias
         window_title = "Online Chess. Player name: " + player_name + ", Pieces Color: " + g.pieces
         g.root.title(window_title)
+        if g.pieces == "WHITE":
+            g.white_time.start()
     # This thread is necessary so that the black team doesn't need to press a button to receive the first move from the white team
     if g.pieces == "BLACK":
+        g.white_time.start()
         update_thread = threading.Thread(target=g.update_board)
         update_thread.start()
     # run GUI program

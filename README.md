@@ -1,7 +1,7 @@
 # Chess - Singleplayer or Online!
 ### Author: Ben Platt
 ### Contributors: Mark Ross, Raymond Johnson, Rhoda Asamoah
-### *Updated 04/25/2023
+### *Updated 05/02/2023
 ### Fully functioning chess game made in python! GUI made using Tkinter. In this program you are able to play chess either singleplayer or online. Note: in order to play online, you must run and connect to Server.py, which is included in this repository.
 ### An important note: The GUI does not currently work as expected on Mac OS systems. The program has been fully tested and developed for windows machines.
 

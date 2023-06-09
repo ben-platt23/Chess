@@ -7,6 +7,7 @@
 
 ## REQUIREMENTS TO RUN:
 ### Operating System --> Only works as expected on WINDOWS 10 MACHINES (no Windows 11, mac, linux, etc.)
+### Network Requirements --> May need to setup port forwarding on your router to support incoming connections to server.py. To do this, access your router's administration settings forward to the hosts IP address and desired port. May also need to create an inbound rule in Windows Firewall settings to support inbound TCP connections on the desired port.
 ### Extensions -->
 #### GUI - Depending on python version, may not need to separately install tkinter:
 #### --pip install tk
